@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading;
 
 namespace WiniumTests {
-    public class WiniumMethods {
+    public class WiniumMethods { //Adding note for git commit test      
         string method;
         WiniumDriver driver;
         ILog debugLog;
