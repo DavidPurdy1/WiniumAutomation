@@ -19,9 +19,8 @@ C:\Users\i00018\source\repos\WiniumTests\obj\Debug\WiniumTests.pdb
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\log4net.dll
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\Log4NetWinUI.exe
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\InfodConfiguration.dll
-C:\Users\i00018\source\repos\WiniumTests\bin\Debug\InfodUtility.dll
-C:\Users\i00018\source\repos\WiniumTests\bin\Debug\InfodUtilityDAL.dll
-C:\Users\i00018\source\repos\WiniumTests\bin\Debug\InfodBaseClasses.dll
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\Log4NetWinUI.pdb
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\Log4NetWinUI.exe.config
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\WiniumTests.dll.config
+C:\Users\i00018\source\repos\WiniumTests\bin\Debug\WebDriver.Support.dll
+C:\Users\i00018\source\repos\WiniumTests\bin\Debug\WebDriver.Support.xml
