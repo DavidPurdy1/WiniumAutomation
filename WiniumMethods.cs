@@ -95,7 +95,7 @@ namespace WiniumTests {
                 try {
                     if (element.Enabled == true) {
                         element.SendKeys(input);
-                        print(method, " Keys sent " + input);
+                        print(method, " Keys sending" + "'"+input+"'");
                         break;
                     }
                 } catch (Exception e) {

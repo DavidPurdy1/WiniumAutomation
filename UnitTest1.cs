@@ -1,45 +1,50 @@
 ﻿using log4net;
 using log4net.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium.Remote;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace WiniumTests { //TODO: CHECK OUT MEMORY USAGE LARGE AMOUNT OF INSTANCES OF WINIUM WEBDRIVER RUNNING IN TASKMANAGER **driver.close() in every situation 
+namespace WiniumTests {
     [TestClass]
     public class IntactTest {
-         ILog debugLog;
+        static ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
         public string method;
-        public UserMethods user;
-        
-        //[AssemblyInitialize]
-       // public void TestingInit() {
-          //  debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
-           // user = new UserMethods(debugLog);
-           // XmlConfigurator.Configure();
-          //  Application.EnableVisualStyles();
-           // Application.SetCompatibleTextRenderingDefault(false);
-     //   }
+        public static UserMethods user;
 
+        //public TestContext Context { get; set; }
 
-      //  [ClassCleanup]
-     //   public void Cleanup() {
-       //     user.closeDriver();
-      //  }
-    //
-        public IntactTest() {
-            killIntact();
-            debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
+        [AssemblyInitialize]
+        public static void TestingInit(TestContext Context) {
+            foreach (Process app in Process.GetProcesses()) {
+                if (app.ProcessName.Equals("Intact")) {
+                    app.Kill();
+                }
+            }
             user = new UserMethods(debugLog);
             XmlConfigurator.Configure();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-       }
+        }
+
+        [ClassCleanup]
+        public static void Cleanup() {
+            user.closeDriver();
+        }
+        //Do something on test pass or failing, need to figure out how to have it determine if it passes or fails
+
+        //[TestCleanup]
+        //public void TestCleanup() {
+        //    if (this.Context.CurrentTestOutcome == UnitTestOutcome.Failed) {
+        //        print(method, "FAILED *****************************************");
+        //    } else {
+        //        print(method, "PASSED *****************************************");
+        //    }
+        //}
 
         [TestMethod]
-        public void TEST1_LOGIN() { //TODO: If key is pressed it can exit the testing    //TODO: RIGHT NOW IT IS IMPORTANT THAT INTACT IS FULLSCREEN WHEN LAUNCHED FOR TESTING REASONS                
+        public void TEST1_LOGIN() {               
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
             user.loginToIntact();
@@ -50,17 +55,13 @@ namespace WiniumTests { //TODO: CHECK OUT MEMORY USAGE LARGE AMOUNT OF INSTANCES
         public void TEST2_INZONE() {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
-            user.loginToIntact();
 
             if (!user.getDocumentsFromInZone()) {
                 Assert.Fail();
             }
-
-            user.closeDriver();
             print(method, "Finished*********************************************");
         }
 
-        //NEED TO FIX
         [TestMethod]
         public void TEST3_BATCHREVIEW() {           
             method = MethodBase.GetCurrentMethod().Name;
@@ -85,15 +86,6 @@ namespace WiniumTests { //TODO: CHECK OUT MEMORY USAGE LARGE AMOUNT OF INSTANCES
             print(method, "Started Last Test");
 
             print(method, "All TESTS HAVE PASSED*********************************************");
-        }
-
-        public void killIntact() {
-            foreach (Process app in Process.GetProcesses()) {
-                if (app.ProcessName.Equals("Intact")) {
-                    app.Kill();
-                    print(method, "Past Intact Killed");
-                }
-            }
         }
         /**
          * Prints to the log found in the temp folder

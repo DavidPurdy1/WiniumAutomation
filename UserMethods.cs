@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using Winium.Elements.Desktop.Extensions;
 
 namespace WiniumTests {
-    public class UserMethods { //TODO: THE INSTANCE OF THE DRIVER IS WERIRD FIX IT!! Has to be logged in at least once for it to work
+    public class UserMethods {
         //Add Actions globally so it can be used over again, maybe window as long as it is all good
         WiniumDriver driver;
         DesktopOptions options = new DesktopOptions();
@@ -77,7 +77,7 @@ namespace WiniumTests {
             debugLog.Info(method + " Finished");
         }
         /**
-         * This is going to a specified amount of definitions with random name for each blank. TODO: RIGHT NOW IT IS IMPORTANT THAT INTACT IS FULLSCREEN WILL NOT WORK OTHERWISE
+         * This is going to a specified amount of definitions with random name for each blank.
          */
         public void createNewDefinition(int? numberOfDefinitions = 1) {
             method = MethodBase.GetCurrentMethod().Name;
@@ -115,7 +115,7 @@ namespace WiniumTests {
             print(method, "Finished");
         }
         /**
-         * Going to create a new type and will add random values for all of blanks. VERY IMPORTANT THAT THE INTACT WINDOW IS FULLSCREENED FOR RIGHT NOW 
+         * Going to create a new type and will add random values for all of blanks. 
          */
         public void createNewType(int? numberOfTypes = 1 ) {
             method = MethodBase.GetCurrentMethod().Name;
@@ -239,8 +239,9 @@ namespace WiniumTests {
 
             //attribute test from batch review...
             driver.FindElementById("btnAttribute").Click();
-            driver.FindElementById("btnSave").Click();
-            driver.FindElementById("btnClose").Click();
+            window = driver.FindElementById("frmDocument");
+            window.FindElement(By.Id("btnSave")).Click();
+            window.FindElement(By.Id("btnClose")).Click();
 
             //add to document test from batch review... 
             addDocBatchReview();
@@ -249,7 +250,7 @@ namespace WiniumTests {
 
 
         }
-        private void addDocBatchReview() {
+        public void addDocBatchReview() {
             driver.FindElementById("btnAddToDoc").Click();
             driver.FindElementByName("DEFAULT DEF").Click();
             driver.FindElementByName("DEFAULT DEFINITION TEST").Click();
@@ -262,8 +263,6 @@ namespace WiniumTests {
         }
         /**
          * Collects documents by all definition from InZone.
-         * 
-         * 
          * 
          * TODO: Add if inzone doesn't recognize the definition come in fail the test
          */
@@ -278,7 +277,10 @@ namespace WiniumTests {
             m.clickByIdInTree(window, "btnCollectScan");
             Thread.Sleep(5000);
             bool hasPassed = false;
-            print(method, "THIS IS HOW MANY ROWS" + m.findById(window, "grdDocs").ToDataGrid().RowCount.ToString());
+            //window = m.findById(window, "grdDocs");
+            //foreach(IWebElement e in window.FindElements(By.XPath("//[@ControlType, 'UIA_DataItemControlTypeId (0xC36D)']"))) {
+            //    print(method, e.Text);
+            //}
             if (m.findByName(window, "CleanFreak InZone Test").Displayed) {
                 hasPassed = true;
             }
@@ -288,9 +290,7 @@ namespace WiniumTests {
         }
         /**
          * Method copies over files from one directory to another: Each time before InZone collects this is going to put files in the collector folder
-         * Verify that the startPath always has files in it and those files shouldn't be removed from this folder when collected
-         * 
-         * TODO: ADD AN EVENT TIMER WHERE ONCE THE WINDOW IN FOCUS DISPOSES YOU COULD PROBABLY NOW CLICK COMMIT DOCUMENTS
+         * Verify that the startPath always has files in it and those files shouldn't be removed from this folder when collected.
          */
         private void addDocsToCollector() {
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");

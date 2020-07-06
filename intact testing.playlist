@@ -1,4 +1,5 @@
 <Playlist Version="1.0">
- <Add Test="WiniumTests.IntactTest.test" />
-  <Add Test="WiniumTests.IntactTest.InZonetest" />
+  <Add Test="WiniumTests.IntactTest.TEST1_LOGIN" />
+  <Add Test="WiniumTests.IntactTest.TEST2_INZONE" />
+  <Add Test="WiniumTests.IntactTest.TEST3_BATCHREVIEW" />
 </Playlist>
