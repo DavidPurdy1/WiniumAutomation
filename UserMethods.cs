@@ -4,14 +4,13 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Winium;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using Winium.Elements.Desktop;
+using Winium.Elements.Desktop.Extensions;
 
 namespace WiniumTests {
     public class UserMethods { //TODO: THE INSTANCE OF THE DRIVER IS WERIRD FIX IT!! Has to be logged in at least once for it to work
@@ -55,12 +54,7 @@ namespace WiniumTests {
         public void loginToIntact() {
             method = MethodBase.GetCurrentMethod().Name;
             debugLog.Info(method + " Started");
-
-            m.killPreviousIntact();
-            options.ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath");
-            driver = new WiniumDriver(driverPath, options);
             Thread.Sleep(7000);
-            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
             m.sendKeysById("", "admin");
             if (!needToSetDB) {
                 m.clickByName("&Logon");
@@ -282,7 +276,9 @@ namespace WiniumTests {
             m.clickByNameInTree(window, "InZone");
             window = driver.FindElement(By.Id("frmInZoneMain"));
             m.clickByIdInTree(window, "btnCollectScan");
+            Thread.Sleep(5000);
             bool hasPassed = false;
+            print(method, "THIS IS HOW MANY ROWS" + m.findById(window, "grdDocs").ToDataGrid().RowCount.ToString());
             if (m.findByName(window, "CleanFreak InZone Test").Displayed) {
                 hasPassed = true;
             }
@@ -355,6 +351,12 @@ namespace WiniumTests {
             wordDoc.SaveAs2(ConfigurationManager.AppSettings.Get("TestFailedDocs"));
             word.Quit();
         }
+        public void closeDriver() {
+            m.closeDriver();
+        }
+
+
+
 
         //debugging methods
 

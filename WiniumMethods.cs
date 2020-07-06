@@ -95,8 +95,8 @@ namespace WiniumTests {
                 try {
                     if (element.Enabled == true) {
                         element.SendKeys(input);
-                        print(method, " Keys sent " + input); 
-                            break;
+                        print(method, " Keys sent " + input);
+                        break;
                     }
                 } catch (Exception e) {
                     debugLog.Info(method + e.StackTrace);
@@ -144,7 +144,7 @@ namespace WiniumTests {
                 }
             } catch (NoSuchElementException e) {
                 printError(method, null, e);
-                
+
             }
         }
         public void clickByIdInTree(IWebElement parent, string elementName) {
@@ -191,13 +191,10 @@ namespace WiniumTests {
          * Checks to see if there is already an instance of Intact running, if so Kills it so a new intact test can run
          * TODO: SEE IF THERE IS A WAY TO DISPOSE OF THE APPLICATION WITHOUT KILLING
          */
-        public void killPreviousIntact() {
-            foreach (Process app in Process.GetProcesses()) {
-                if (app.ProcessName.Equals("Intact")) {
-                    app.Kill();
-                    print(method, "Past Intact Killed");
-                }
-            }
+
+        public void closeDriver() {
+            driver.Quit();
+            print(method, "DRIVER CLOSED");
         }
         //Want this to cycle through all processes like kill method, 
         //but then cast to a window and get the windowState, then have it set the window max based off that 
@@ -211,6 +208,6 @@ namespace WiniumTests {
         public void printError(string method, string toPrint, Exception e) {
             debugLog.Info(method + " " + e + " " + toPrint);
         }
-        
+
     }
 }

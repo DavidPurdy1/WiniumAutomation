@@ -1,0 +1,4 @@
+<Playlist Version="1.0">
+ <Add Test="WiniumTests.IntactTest.test" />
+  <Add Test="WiniumTests.IntactTest.InZonetest" />
+</Playlist>
