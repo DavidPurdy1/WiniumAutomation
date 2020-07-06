@@ -10,18 +10,18 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using Winium.Elements.Desktop.Extensions;
 
 namespace WiniumTests {
     public class UserMethods {
-        //Add Actions globally so it can be used over again, maybe window as long as it is all good
+        Actions action;
+        IWebElement window;
         WiniumDriver driver;
-        DesktopOptions options = new DesktopOptions();
-        WiniumMethods m;
-        bool needToSetDB = false;
-        string driverPath;
         string method;
-        ILog debugLog;
+        readonly DesktopOptions options = new DesktopOptions();
+        readonly WiniumMethods m;
+        readonly bool needToSetDB = false;
+        readonly string driverPath;
+        readonly ILog debugLog;
 
         public UserMethods(ILog log) {
             debugLog = log;
@@ -29,12 +29,13 @@ namespace WiniumTests {
             driverPath = ConfigurationManager.AppSettings.Get("DriverPath");
             driver = new WiniumDriver(driverPath, options);
             driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
+            action = new Actions(driver);
             m = new WiniumMethods(driver, debugLog);
         }
 
-        /**
+        /**Doesn't work
          * This is going to connect to a remote server with the name brought in by serverName, when used
-         * Doesn't work with the changes that have been made
+         * Doesn't work with the changes that have been made, lots of these are readonly
          */
         public void connectToRemoteDesktop(DesktopOptions options, string serverName) {
 
@@ -48,8 +49,7 @@ namespace WiniumTests {
 
             print(method, "Finished");
         }
-        /**
-         * Logs into intact automatically with the admin login, THIS METHOD HAS TO BE RAN FIRST WITH THE DRIVER 
+        /**THIS METHOD HAS TO BE RAN FIRST WITH TESTS, Logs into intact with admin login
          */
         public void loginToIntact() {
             method = MethodBase.GetCurrentMethod().Name;
@@ -76,14 +76,13 @@ namespace WiniumTests {
 
             debugLog.Info(method + " Finished");
         }
-        /**
-         * This is going to a specified amount of definitions with random name for each blank.
+        /**This is going to a specified amount of definitions with random name for each blank.
          */
         public void createNewDefinition(int? numberOfDefinitions = 1) {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
 
-            var window = driver.FindElement(By.Id("frmIntactMain"));
+            window = driver.FindElement(By.Id("frmIntactMain"));
 
             window = window.FindElement(By.Name("radMenu1"));
             m.clickByNameInTree(window, "&Administration");
@@ -114,14 +113,13 @@ namespace WiniumTests {
             m.clickByName("&Close");
             print(method, "Finished");
         }
-        /**
-         * Going to create a new type and will add random values for all of blanks. 
+        /**Going to create a new type and will add random values for all of blanks.
          */
         public void createNewType(int? numberOfTypes = 1 ) {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
 
-            var window = driver.FindElement(By.Id("frmIntactMain"));
+            window = driver.FindElement(By.Id("frmIntactMain"));
 
             window = window.FindElement(By.Name("radMenu1"));
 
@@ -169,7 +167,6 @@ namespace WiniumTests {
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             driver.FindElement(By.Id("lblType")).Click();
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            Actions action = new Actions(driver);
             action.MoveByOffset(20, -40).Click().MoveByOffset(20,60).Click().Build().Perform();
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
@@ -209,66 +206,66 @@ namespace WiniumTests {
         }
         /**
          * This method is going to add documents to batch review and then run through and both add a document to an existing document and attribute a new one.
+         * Does usually run slow
          */
         public void BatchReview() {
             addDocsToCollector();
-            var window = driver.FindElement(By.Id("frmIntactMain"));
+            window = driver.FindElement(By.Id("frmIntactMain"));
             window = m.findById(window, "radPanelBar1");
             window = m.findById(window, "pageIntact");
             window = m.findById(window, "lstIntact");
             m.clickByNameInTree(window, "Batch Review");
             driver.FindElement(By.Id("6")).Click();
+            Thread.Sleep(1000);
             driver.FindElement(By.Id("6")).Click();
 
-            //window = driver.FindElement(By.Name("Review"));
-            //window = m.findById(window, "radSplitContainer1");
-            //window = driver.FindElement(By.Id("splitPanel2"));
-            // window = m.findById(window, "radCommandBar1");
-            //m.clickByIdInTree(window, "btnRotate");
-            //m.getDriver().FindElementById("btnRotate").Click();
-            //string[] zoomInput = { "Fit Width", "Fit Height", "10%", "50%", "100%", "200%", "400%" };
-            // for (int t = 0; t < zoomInput.Length; t++) {
-            //  m.sendKeysById("329982", zoomInput[t] + Keys.Enter);
-            //}
-            // print(method, window.Location.X.ToString() + " " + window.Location.Y.ToString());
-            //driver.FindElementById("btnRotate").Click();
-
-            //var element = m.findById(window, "radCommandBar1");
-            //SelectElement select = new SelectElement(element);
-            //select.SelectByIndex(4);
 
             //attribute test from batch review...
-            driver.FindElementById("btnAttribute").Click();
-            window = driver.FindElementById("frmDocument");
-            window.FindElement(By.Id("btnSave")).Click();
-            window.FindElement(By.Id("btnClose")).Click();
+            BatchAttribution();
 
             //add to document test from batch review... 
             addDocBatchReview();
 
             driver.FindElementById("btnClose").Click();
-
-
         }
+        /**Should not call this method in tests
+         */
         public void addDocBatchReview() {
             driver.FindElementById("btnAddToDoc").Click();
             driver.FindElementByName("DEFAULT DEF").Click();
             driver.FindElementByName("DEFAULT DEFINITION TEST").Click();
             driver.FindElementById("rbtnOK").Click();
+            Thread.Sleep(2000);
             driver.FindElement(By.Name("&OK"));
-            var window = driver.FindElementById("frmInsertPagesVersion");
+            Thread.Sleep(2000);
+            window = driver.FindElementById("frmInsertPagesVersion");
             m.clickByIdInTree(window, "btnOK");
             driver.FindElementByName("Save").Click();
             driver.FindElementByName("Close").Click();
         }
-        /**
-         * Collects documents by all definition from InZone.
+        public void BatchAttribution() {
+            window = driver.FindElement(By.Id("frmBatchReview"));
+            window.FindElement(By.Id("btnAttribute")).Click();
+            Thread.Sleep(2000);
+            window = driver.FindElementById("frmDocument");
+
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            driver.FindElement(By.Id("lblType")).Click();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            action.MoveByOffset(375, -37).Click().Click().Build().Perform();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+
+
+            window.FindElement(By.Id("btnSave")).Click();
+            window.FindElement(By.Id("btnClose")).Click();
+        }
+        /**Collects documents by all definition from InZone.
          * 
          * TODO: Add if inzone doesn't recognize the definition come in fail the test
          */
         public bool getDocumentsFromInZone() { //This is supposed to return true if the document has been identified, UNTESTED RIGHT NOW
             addDocsToCollector();
-            var window = driver.FindElement(By.Id("frmIntactMain"));
+            window = driver.FindElement(By.Id("frmIntactMain"));
             window = m.findById(window, "radMenu1");
             m.clickByNameInTree(window, "&Intact");
             window = m.findByName(window, "&Intact");
@@ -276,19 +273,17 @@ namespace WiniumTests {
             window = driver.FindElement(By.Id("frmInZoneMain"));
             m.clickByIdInTree(window, "btnCollectScan");
             Thread.Sleep(5000);
-            bool hasPassed = false;
+
             //window = m.findById(window, "grdDocs");
             //foreach(IWebElement e in window.FindElements(By.XPath("//[@ControlType, 'UIA_DataItemControlTypeId (0xC36D)']"))) {
-            //    print(method, e.Text);
+            //   print(method, e.Text);
             //}
-            if (m.findByName(window, "CleanFreak InZone Test").Displayed) {
-                hasPassed = true;
-            }
+            bool hasPassed = m.IsElementPresent(By.Name("CleanFreak InZone Test"));
             m.clickByIdInTree(window, "btnCommit");
             m.clickByIdInTree(window, "btnClose");
             return hasPassed;
         }
-        /**
+        /**Should not call this method in tests
          * Method copies over files from one directory to another: Each time before InZone collects this is going to put files in the collector folder
          * Verify that the startPath always has files in it and those files shouldn't be removed from this folder when collected.
          */
@@ -303,8 +298,7 @@ namespace WiniumTests {
                 print(method, "Starting or Ending path doesn't exist");
             }
         }
-        /**
-         * This is going to take a screenshot each time it is called and save it to the folder where the imageToDoc() method will save it and put it on a word doc.
+        /** This is going to take a screenshot each time it is called and save it
          * 
          * TODO: MAKE IT DELETE THE IMAGES EACH TIME THAT WAY YOU DON'T GET MORE AND MORE IMAGES ON THE DOC FROM OTHER FAILED TESTS. TRY DOING THIS IN IMAGETODOC.
          */
@@ -315,8 +309,8 @@ namespace WiniumTests {
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
 
         }
-        /**
-         * Going to grab the images in the folder that has failed and is going to put them on a word doc. Put at the end of tests.
+        /**Take images from folder and put them on a word doc
+         * Put at the end of tests.
          */
         public void imageToDoc() { //have to figure out how to delete things afterwards
             Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
@@ -354,11 +348,47 @@ namespace WiniumTests {
         public void closeDriver() {
             m.closeDriver();
         }
+        /** Have to add all scenarios where there is a new window open
+         * This is to close out and get back to the window for the next test.
+         */ 
+        public void onFail() {
+            if(m.IsElementPresent(By.Id("frmDocument"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+                return;
+            }
+            if (m.IsElementPresent(By.Id("frmInZoneMain"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+                return;
+            }
+            if (m.IsElementPresent(By.Id("frmBatchReview"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+                return;
+            }
+            if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+                return;
+            }
+            if (m.IsElementPresent(By.Id("frmRulesEdit"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+                return;
+            }
+            if (m.IsElementPresent(By.Id("frmZoneConfig"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+                return;
+            }
+            if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+                return;
+            }
+        }
 
-
-
-
-        //debugging methods
 
         /**
          * Prints to the log found in the temp folder

@@ -2,12 +2,11 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Winium;
 using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 
 namespace WiniumTests {
-    public class WiniumMethods { //Adding note for git commit test      
+    public class WiniumMethods {     
         string method;
         WiniumDriver driver;
         ILog debugLog;
@@ -105,33 +104,6 @@ namespace WiniumTests {
             }
         }
         /**
-         * This method is going to take something in the pre-existing element blank and add the input string to the end of it without a space
-         */
-        public void addInputToEntryByClass(string elementName, string input) {
-            IWebElement element = null;
-            method = MethodBase.GetCurrentMethod().Name;
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    element = driver.FindElementByName(elementName); break;
-                } catch (Exception e) {
-                    debugLog.Info(method + " ", e);
-                    Thread.Sleep(1000);
-                }
-            }
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    if (element.Enabled == true) {
-                        string value = driver.FindElementByClassName(elementName).Text;
-                        driver.FindElementByClassName(elementName).SendKeys(value + input);
-                        break;
-                    }
-                } catch (Exception e) {
-                    Thread.Sleep(1000);
-                    debugLog.Info(method + " ", e);
-                }
-            }
-        }
-        /**
          * Got rid of the for loops for checking if the elements are enabled
          */
         public void clickByNameInTree(IWebElement parent, string elementName) {
@@ -191,17 +163,20 @@ namespace WiniumTests {
          * Checks to see if there is already an instance of Intact running, if so Kills it so a new intact test can run
          * TODO: SEE IF THERE IS A WAY TO DISPOSE OF THE APPLICATION WITHOUT KILLING
          */
-
+        public bool IsElementPresent(By by) {
+            try {
+                driver.FindElement(by);
+                return true;
+            } catch (NoSuchElementException) {
+                return false;
+            }
+        }
         public void closeDriver() {
             driver.Quit();
             print(method, "DRIVER CLOSED");
         }
-        //Want this to cycle through all processes like kill method, 
-        //but then cast to a window and get the windowState, then have it set the window max based off that 
 
-        /**
-         * Prints to the log found in the temp folder
-         */
+
         public void print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }
