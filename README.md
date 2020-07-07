@@ -11,13 +11,10 @@
 
 -To add to an excel sheet what fails and what passes https://www.youtube.com/watch?v=yEa_Xo4yfHY
 
--Add an implicit wait class so the test works faster and better because then it will have a lot lower chance of something failing if it doesn't load in time.
+- For Microsoft.Office.Interop, can only work on machines with office, have to add support where the screenshots will just create a new folder and go in there as well as what tests failed , maybe csv? instead of excel.
 
--Driver closing on stopping a test or failing as well as actually failing the test when it can't find the element instead of just running for 60 seconds (Maybe either changing the inactivity time, but finding some way for when the test is stopped or failed for the driver to close) & when it passes
-
+- When more than a couple tests fail, most likely it is going to be a problem with the program, maybe implement removing the first test that failed if array of test is larger than a certain amount. Could be done by creating a playlist and then deciding what playlist to run/uninclude test somehow.
 ----------------------------------------------------------------------------------------------------------------
-
--Set up an InZone test on definitions that will recognize and prove that the definitions InZones are working. When it goes through InZone as long as the name is equal to one of the def names it will return true and pass the test]
 
 -have it clear out the images from the failed image folder after it creates the documents so it doesn't add more images to the fail log. Have it rerun the test on failure, but figure out how to have it use the failLog method on each step.
 
@@ -26,6 +23,12 @@
 -On each screen go through and add interaction with each button and blank to see if it throws an error or messes something up
 
 -Going through and testing every blank and scenario for the document attribution screen:: Can be reused 
+
+-Might have to switch to winapp but there are some downsides. 
+
+-Cancellation token source for when tests are stopped in the middle, remove drivers staying open or could just cycle through and get rid of them like intact.
+
+-Exception, have to figure out if it isn't going to find the element on how to exit quickly, verify that test resets are working on all screens!!
 
 # Features Added 
 
@@ -42,5 +45,7 @@
 -Config file so it can be set up on any machine
 
 -Default values for everything, but option to specify exactly what you want for most of the tests. Trying to balance ease and customization of the tests 
+
+-Inzone recoginizes correct definitions when coming in. 
 
 
