@@ -152,50 +152,74 @@ namespace WiniumTests {
         * Takes in isPDF telling whether or not it is a PDF or TIF and then numOfDocs for how many to add.
         * Going to take a random document from some preset path and with that it is going to add that document either pdf or not to a random definition and type with random metadata.
         */
-        public void createDocument(int? numOfDocs = 1, bool isPDF = true, string docPath = @"C:\Automation\createDocumentStorage") {
+        public void createDocument(int? numOfDocs = 1, bool isPDF = true, string docPath = "") {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
 
             driver.FindElement(By.Name("Add Document")).Click();
+
+            //adding note 
             driver.FindElementById("btnNotes").Click();
             driver.FindElementById("btnAddNote").Click();
             driver.FindElementById("txtNote").SendKeys("TEST NOTE");
             driver.FindElementById("btnOK").Click();
             driver.FindElementById("btnNotes").Click();
 
-
+            //add document button (+ icon)
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             driver.FindElement(By.Id("lblType")).Click();
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            action.MoveByOffset(20, -40).Click().MoveByOffset(20,60).Click().Build().Perform();
+            action.MoveByOffset(20, -40).Click().MoveByOffset(20, 60).Click().Build().Perform();
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
-            //m.sendKeysById("radCommandBar1", Keys.Control + "a");    //alternative method if coordinates don't work 
-
+            //find the document to add in file explorer
+            //configure docpath in app.config, takes arg of pdf or tif 
+            if (docPath.Length < 1) {
+                docPath = ConfigurationManager.AppSettings.Get("AddDocumentStorage");
+            }
             m.sendKeysById("1001", docPath);
             print(method, "Go to \"" + docPath + "\"");
             driver.FindElement(By.Name("Go to \""+ docPath + "\"")).Click();
 
-            for (int i = 0; i < numOfDocs; i++) {
-                var rand = new Random();
+            var rand = new Random();
                 if (isPDF) {
                     Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(driver.FindElementByName("Files of type:"));
                     filesOfType.SendKeys("p");
-                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("PDF" + rand.Next(3).ToString()).Build().Perform();
+                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("PDF").Build().Perform();
                     driver.FindElementById("1").Click();
                 } else {
                     action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("TIF" + rand.Next(3).ToString()).Build().Perform();
                 }
-            }
+            
             Thread.Sleep(3000);
+
+            //rotate
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            driver.FindElement(By.Id("lblType")).Click();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            action.MoveByOffset(375, -37).Click().Click().Build().Perform();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+
+            //edit custom fields
+            driver.FindElement(By.Name("StringQA")).SendKeys("STRING TEST");
+            driver.FindElement(By.Name("DateQA")).SendKeys("1/1/3000");
+            driver.FindElement(By.Name("NumberQA")).SendKeys("7");
+
+            //edit fields
+            window = driver.FindElement(By.Id("frmDocument"));
+            m.findById(window, "dtcExpireDate").SendKeys("1/1/3000");
+            driver.FindElement(By.Id("btnOK")).Click();
+            driver.FindElementById("1").Click();
+            Thread.Sleep(3000);
+            m.findById(window, "txtAuthor").SendKeys("AUTHOR TEST");
+            driver.FindElement(By.Id("btnOK")).Click();
+            driver.FindElementById("1").Click();
+            Thread.Sleep(3000);
+            m.findById(window, "txtSummary").SendKeys("SUMMARY TEST");
+
+            //save and quit
             driver.FindElement(By.Id("btnSave")).Click();
             driver.FindElement(By.Id("btnClose")).Click();
-
-            //var window = driver.FindElementById("pnlAttributes");
-            //m.findById(window, "dtcExpireDate").SendKeys("1/1/3000");
-            //m.findById(window, "txtAuthor").SendKeys("AUTHOR TEST");
-            //m.findById(window, "txtSummary").SendKeys("SUMMARY TEST");
-
             print(method, "Finished");
         }
         public void openOrganizer() {
@@ -209,6 +233,7 @@ namespace WiniumTests {
          * Does usually run slow
          */
         public void BatchReview() {
+            method = MethodBase.GetCurrentMethod().Name;
             addDocsToCollector();
             window = driver.FindElement(By.Id("frmIntactMain"));
             window = m.findById(window, "radPanelBar1");
@@ -264,6 +289,7 @@ namespace WiniumTests {
          * TODO: Add if inzone doesn't recognize the definition come in fail the test
          */
         public bool getDocumentsFromInZone() { //This is supposed to return true if the document has been identified, UNTESTED RIGHT NOW
+            method = MethodBase.GetCurrentMethod().Name;
             addDocsToCollector();
             window = driver.FindElement(By.Id("frmIntactMain"));
             window = m.findById(window, "radMenu1");
@@ -273,12 +299,18 @@ namespace WiniumTests {
             window = driver.FindElement(By.Id("frmInZoneMain"));
             m.clickByIdInTree(window, "btnCollectScan");
             Thread.Sleep(5000);
-
-            //window = m.findById(window, "grdDocs");
-            //foreach(IWebElement e in window.FindElements(By.XPath("//[@ControlType, 'UIA_DataItemControlTypeId (0xC36D)']"))) {
-            //   print(method, e.Text);
-            //}
-            bool hasPassed = m.IsElementPresent(By.Name("CleanFreak InZone Test"));
+            print(method, DateTime.Now.ToString());
+            bool hasPassed = false;
+            string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
+            foreach (string s in Directory.GetFiles(startPath)) {
+                string test = Path.GetFileName(s);
+                if (m.IsElementPresent(By.Name(test.Substring(0,test.Length-4)))) {
+                    hasPassed = true;
+                    break;
+                }
+            }
+            print(method, DateTime.Now.ToString());
+            //bool hasPassed = m.IsElementPresent(By.Name("CleanFreak InZone Test"));
             m.clickByIdInTree(window, "btnCommit");
             m.clickByIdInTree(window, "btnClose");
             return hasPassed;
@@ -313,6 +345,7 @@ namespace WiniumTests {
          * Put at the end of tests.
          */
         public void imageToDoc() { //have to figure out how to delete things afterwards
+            method = MethodBase.GetCurrentMethod().Name;
             Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
             Document wordDoc = word.Documents.Add();
             Range range = wordDoc.Range();

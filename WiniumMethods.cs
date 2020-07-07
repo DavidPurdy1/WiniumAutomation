@@ -166,8 +166,10 @@ namespace WiniumTests {
         public bool IsElementPresent(By by) {
             try {
                 driver.FindElement(by);
+                print(method, by.ToString() + " found");
                 return true;
             } catch (NoSuchElementException) {
+                print(method, by.ToString() + " not present");
                 return false;
             }
         }
