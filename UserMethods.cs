@@ -39,15 +39,15 @@ namespace WiniumTests {
          */
         public void connectToRemoteDesktop(DesktopOptions options, string serverName) {
 
-            method = MethodBase.GetCurrentMethod().Name;
-            print(method, "Started");
+            //method = MethodBase.GetCurrentMethod().Name;
+            //print(method, "Started");
 
-            options.ApplicationPath = ConfigurationManager.AppSettings.Get("RemoteDesktop"); 
-            driver = new WiniumDriver(driverPath, options);
-            m.sendKeysByName("Remote Desktop Connection", serverName);
-            m.clickByName("Connect");
+            //options.ApplicationPath = ConfigurationManager.AppSettings.Get("RemoteDesktop"); 
+            //driver = new WiniumDriver(driverPath, options);
+            //m.sendKeysByName("Remote Desktop Connection", serverName);
+            //m.clickByName("Connect");
 
-            print(method, "Finished");
+            //print(method, "Finished");
         }
         /**THIS METHOD HAS TO BE RAN FIRST WITH TESTS, Logs into intact with admin login
          */
@@ -58,24 +58,24 @@ namespace WiniumTests {
             bool needToSetDB = ConfigurationManager.AppSettings.Get("setDataBase") == "true"; ;
             bool connectToRemote = ConfigurationManager.AppSettings.Get("connectToRemote") == "true";
             Thread.Sleep(7000);
-            m.sendKeysById("", "admin");
+            m.SendKeys(By.Name(""), "admin");
             if (!needToSetDB) {
-                m.clickByName("&Logon");
+                m.Click(By.Name("&Logon"));
             } else {
                 setDatabaseInformation();
-                m.clickByName("&Logon");
+                m.Click(By.Name("&Logon"));
             }
-            debugLog.Info(method + " Finished");
+            print(method, " Finished");
         }
         //UNTESTED
         private void setDatabaseInformation() {
             method = MethodBase.GetCurrentMethod().Name;
             debugLog.Info(method + " Started");
-            m.clickByName("&Settings..");
-            m.sendKeysByName("", @"(local)\INTACT");
-            m.sendKeysByName("", "{TAB}");
-            m.sendKeysByName("", "{TAB}");
-            m.sendKeysByName("", "{ENTER}");
+            m.Click(By.Name("&Settings.."));
+            m.SendKeys(By.Name(""), @"(local)\INTACT");
+            m.SendKeys(By.Name(""), "{TAB}");
+            m.SendKeys(By.Name(""), "{TAB}");
+            m.SendKeys(By.Name(""), "{ENTER}");
 
             debugLog.Info(method + " Finished");
         }
@@ -84,36 +84,26 @@ namespace WiniumTests {
         public void createNewDefinition(int? numberOfDefinitions = 1) {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
-
             window = driver.FindElement(By.Id("frmIntactMain"));
-
             window = window.FindElement(By.Name("radMenu1"));
-            m.clickByNameInTree(window, "&Administration");
-
+            m.Click(By.Name("&Administration"), window);
             window = window.FindElement(By.Name("&Administration"));
-            m.clickByNameInTree(window, "Definitions");
-
+            m.Click(By.Name("Definitions"), window);
             for (int i = 0; i <= numberOfDefinitions; i++) {
                 var num = new Random().Next().ToString();
-
-                window = driver.FindElementById("frmIntactMain");
-
-                window = window.FindElement(By.Id("frmRulesList"));
-
-                window.FindElement(By.Id("btnAdd")).Click();
-
-                window = window.FindElement(By.Name("Add Definition"));
-
-                debugLog.Info("Definition name is " + "Test " + num);
-
+                window = m.Locate(By.Id("frmIntactMain"));
+                window = m.Locate(By.Id("frmRulesList"));
+                m.Click(By.Id("btnAdd"));
+                window = m.Locate(By.Name("Add Definition"));
+                print(method, "Definition name is " + "Test " + num);
                 foreach (IWebElement element in window.FindElements(By.Name(""))) {
                     if (element.Enabled == true) {
                         try { element.SendKeys("Test " + num); } catch (Exception) { }
                     }
                 }
-                m.clickByNameInTree(window, "&Save");
+                m.Click(By.Name("&Save"), window);
             }
-            m.clickByName("&Close");
+            m.Click(By.Name("&Close"));
             print(method, "Finished");
         }
         /**Going to create a new type and will add random values for all of blanks.
@@ -122,33 +112,32 @@ namespace WiniumTests {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
 
-            window = driver.FindElement(By.Id("frmIntactMain"));
+            window = m.Locate(By.Id("frmIntactMain"));
 
-            window = window.FindElement(By.Name("radMenu1"));
+            window = m.Locate(By.Name("radMenu1"));
+            m.Click(By.Name("&Administration"), window);
 
-            m.clickByNameInTree(window, "&Administration");
-
-            window = window.FindElement(By.Name("&Administration")); //add the setting of the window in the tree method and rename it
-            m.clickByNameInTree(window, "Types");
-
+            window = m.Locate(By.Name("&Administration"));
+            m.Click(By.Name("Types"), window);
 
             for (int i = 0; i < numberOfTypes; i++) {
                 var temp = new Random().Next().ToString();
-                window = driver.FindElement(By.Id("frmIntactMain"));
+                window = m.Locate(By.Id("frmIntactMain"));
 
-                window = window.FindElement(By.Id("frmAdminTypes"));
-                window.FindElement(By.Id("rbtnAdd")).Click();
+                window = m.Locate(By.Id("frmAdminTypes"));
 
-                window = window.FindElement(By.Id("frmAdminTypesInfo"));
+                m.Click(By.Id("rbtnAdd"), window);
+
+                window = m.Locate(By.Id("frmAdminTypesInfo"));
 
                 foreach (IWebElement element in window.FindElements(By.Name(""))) {
                     if (element.Enabled == true) {
                         try { element.SendKeys("Test " + temp); } catch (Exception) { }
                     }
                 }
-                m.clickByName("&OK");
+                m.Click(By.Name("&OK"));
             }
-            m.clickByName("&Close");
+            m.Click(By.Name("&Close"));
             print(method, "Finished");
         }
         /** //TODO: Need to refine createDocument a bit
@@ -159,22 +148,22 @@ namespace WiniumTests {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
             Thread.Sleep(2000);
+
             for (int i = 0; i < numOfDocs; i++) {
+                m.Click(By.Name("Add Document"));
 
-
-                driver.FindElement(By.Name("Add Document")).Click();
                 Thread.Sleep(1000);
                 //adding note 
-                driver.FindElementById("btnNotes").Click();
-                driver.FindElementById("btnAddNote").Click();
-                driver.FindElementById("rchkPrivate").Click();
-                driver.FindElementById("txtNote").SendKeys("TEST NOTE");
-                driver.FindElementById("btnOK").Click();
-                driver.FindElementById("btnNotes").Click();
+                m.Click(By.Id("btnNotes"));
+                m.Click(By.Id("rchkPrivate"));
+                m.Click(By.Id("btnAddNote"));
+                m.SendKeys(By.Id("txtNote"), "TEST NOTE");
+                m.Click(By.Id("btnOK"));
+                m.Click(By.Id("btnNotes"));
 
                 //add document button (+ icon)
                 print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-                driver.FindElement(By.Id("lblType")).Click();
+                m.Click(By.Id("lblType"));
                 print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
                 action.MoveByOffset(20, -40).Click().MoveByOffset(20, 60).Click().Build().Perform();
                 print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
@@ -184,19 +173,19 @@ namespace WiniumTests {
                 if (docPath.Length < 1) {
                     docPath = ConfigurationManager.AppSettings.Get("AddDocumentStorage");
                 }
-                m.sendKeysById("1001", docPath);
+                m.SendKeys(By.Id("1001"), docPath);
                 print(method, "Go to \"" + docPath + "\"");
-                driver.FindElement(By.Name("Go to \"" + docPath + "\"")).Click();
+                m.Click(By.Name("Go to \"" + docPath + "\""));
 
                 var rand = new Random();
                 if (isPDF) {
                     Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(driver.FindElementByName("Files of type:"));
                     filesOfType.SendKeys("p");
                     action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("PDF" + rand.Next(6).ToString()).Build().Perform();
-                    driver.FindElementById("1").Click();
+                    m.Click(By.Id("1"));
                 } else {
                     action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("TIF" + rand.Next(6).ToString()).Build().Perform();
-                    driver.FindElementById("1").Click();
+                    m.Click(By.Id("1"));
                 }
 
                 Thread.Sleep(3000);
@@ -219,16 +208,16 @@ namespace WiniumTests {
 
                 //save and quit
                 print(method, "save and quit");
-                driver.FindElement(By.Id("btnSave")).Click();
-                driver.FindElement(By.Id("btnClose")).Click();
+                m.Click(By.Id("btnSave"));
+                m.Click(By.Id("btnClose"));
                 print(method, "Finished");
             }
         }
         public void openOrganizer() {
             method = MethodBase.GetCurrentMethod().Name;
-            debugLog.Info(method + " Started");
-            m.clickByName("Organizer");
-            debugLog.Info(method + " Finished");
+            print(method, " Started");
+            m.Click(By.Name("Organizer"));
+            print(method, " Finished");
         }
         /**
          * This method is going to add documents to batch review and then run through and both add a document to an existing document and attribute a new one.
@@ -237,14 +226,16 @@ namespace WiniumTests {
         public void BatchReview() {
             method = MethodBase.GetCurrentMethod().Name;
             addDocsToCollector();
-            window = driver.FindElement(By.Id("frmIntactMain"));
-            window = m.findById(window, "radPanelBar1");
-            window = m.findById(window, "pageIntact");
-            window = m.findById(window, "lstIntact");
-            m.clickByNameInTree(window, "Batch Review");
-            driver.FindElement(By.Id("6")).Click();
+
+            window = m.Locate(By.Id("frmIntactMain"));
+
+            window = m.Locate(By.Id("radPanelBar1"), window);
+            window = m.Locate(By.Id("pageIntact"), window);
+            window = m.Locate(By.Id("lstIntact"), window);
+            m.Click(By.Name("Batch Review"), window);
+            m.Click(By.Id("6"));
             Thread.Sleep(1000);
-            driver.FindElement(By.Id("6")).Click();
+            m.Click(By.Id("6"));
 
 
             //attribute test from batch review...
@@ -253,38 +244,36 @@ namespace WiniumTests {
             //add to document test from batch review... 
             addDocBatchReview();
 
-            driver.FindElementById("btnClose").Click();
+            m.Click(By.Id("btnClose"));
         }
         /**Should not call this method in tests
          */
         private void addDocBatchReview() {
-            driver.FindElementById("btnAddToDoc").Click();
-            driver.FindElementByName("DEFAULT DEF").Click();
-            driver.FindElementByName("DEFAULT DEFINITION TEST").Click();
-            driver.FindElementById("rbtnOK").Click();
+            m.Click(By.Id("btnAddToDoc"));
+            m.Click(By.Name("DEFAULT DEF"));
+            m.Click(By.Name("DEFAULT DEFINITION TEST"));
+            m.Click(By.Id("rbtnOK"));
             Thread.Sleep(2000);
-            driver.FindElement(By.Name("&OK"));
+            m.Locate(By.Name("&OK"));
             Thread.Sleep(2000);
-            window = driver.FindElementById("frmInsertPagesVersion");
-            m.clickByIdInTree(window, "btnOK");
-            driver.FindElementByName("Save").Click();
-            driver.FindElementByName("Close").Click();
+            window = m.Locate(By.Id("frmInsertPagesVersion"));
+            m.Click(By.Id("btnOK"), window);
+            m.Click(By.Name("Save"));
+            m.Click(By.Name("Close"));
         }
         private void BatchAttribution() {
-            window = driver.FindElement(By.Id("frmBatchReview"));
-            window.FindElement(By.Id("btnAttribute")).Click();
+            window = m.Locate(By.Id("frmBatchReview"));
+            m.Click(By.Id("btnAttribute"), window);
             Thread.Sleep(2000);
-            window = driver.FindElementById("frmDocument");
-
+            window = m.Locate(By.Id("frmDocument"));
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            driver.FindElement(By.Id("lblType")).Click();
+            m.Click(By.Id("lblType"));
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             action.MoveByOffset(375, -37).Click().Click().Build().Perform();
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
-
-            window.FindElement(By.Id("btnSave")).Click();
-            window.FindElement(By.Id("btnClose")).Click();
+            m.Click(By.Id("btnSave"), window);
+            m.Click(By.Id("btnClose"), window);
         }
         /**Collects documents by all definition from InZone.
          * 
@@ -293,15 +282,17 @@ namespace WiniumTests {
         public bool getDocumentsFromInZone() { //This is supposed to return true if the document has been identified, UNTESTED RIGHT NOW
             method = MethodBase.GetCurrentMethod().Name;
             addDocsToCollector();
-            window = driver.FindElement(By.Id("frmIntactMain"));
-            window = m.findById(window, "radMenu1");
-            m.clickByNameInTree(window, "&Intact");
-            window = m.findByName(window, "&Intact");
-            m.clickByNameInTree(window, "InZone");
-            window = driver.FindElement(By.Id("frmInZoneMain"));
-            m.clickByIdInTree(window, "btnCollectScan");
+            window = m.Locate(By.Id("frmIntactMain"));
+            window = m.Locate(By.Id("radMenu1"), window);
+            m.Click(By.Name("&Intact"), window);
+            window = m.Locate(By.Name("&Intact"), window);
+            m.Click(By.Name("InZone"), window);
+            Thread.Sleep(2000);
+            window = m.Locate(By.Id("frmInZoneMain"));
+            m.Click(By.Id("btnCollectScan"), window);
             Thread.Sleep(9000);
             bool hasPassed = false;
+
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
             foreach (string s in Directory.GetFiles(startPath)) {
                 string test = Path.GetFileName(s);
@@ -310,9 +301,9 @@ namespace WiniumTests {
                     break;
                 }
             }
-            //bool hasPassed = m.IsElementPresent(By.Name("CleanFreak InZone Test"));
-            m.clickByIdInTree(window, "btnCommit");
-            m.clickByIdInTree(window, "btnClose");
+            m.Click(By.Id("btnCommit"), window);
+            Thread.Sleep(1000);
+            m.Click(By.Id("btnClose"), window);
             return hasPassed;
         }
         /**Should not call this method in tests

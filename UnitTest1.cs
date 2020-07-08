@@ -18,7 +18,7 @@ namespace WiniumTests {
         static List<string> testsPassedNames = new List<string>();
 
         [AssemblyInitialize]
-        public static void TestingInit(TestContext _testContext) { //something having to do with the testContext is wrong
+        public static void TestingInit(TestContext _testContext) { //TODO: something having to do with the testContext is wrong
             testContext = _testContext;
             foreach (Process app in Process.GetProcesses()) {
                 if (app.ProcessName.Equals("Intact")) {
@@ -35,7 +35,7 @@ namespace WiniumTests {
             print(testContext.TestName, "STARTED *********************************************");
         }
         [TestCleanup]
-        public void TestCleanup() { //if the test is failed then it has to close out of the current window and return to the intact main 
+        public void TestCleanup() { //if the test is failed then it has to close out of the current window and return to the intact main look at onFail in usermethods
             if (testContext.CurrentTestOutcome == UnitTestOutcome.Passed) {
                 testsPassedNames.Add(testContext.TestName);
                 print(method, "PASSED *****************************************");
@@ -62,7 +62,7 @@ namespace WiniumTests {
         public void TEST2_INZONE() {
             method = MethodBase.GetCurrentMethod().Name;
             if (!user.getDocumentsFromInZone()) {
-                Assert.Fail();
+                throw new AssertFailedException(method + " InZone did not recognize the definition correctly");
             }
         }
         [TestMethod]

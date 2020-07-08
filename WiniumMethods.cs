@@ -1,177 +1,118 @@
 ﻿using log4net;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Winium;
 using System;
 using System.Reflection;
-using System.Threading;
+
 
 namespace WiniumTests {
-    public class WiniumMethods {     
+    public class WiniumMethods {
         string method;
-        WiniumDriver driver;
-        ILog debugLog;
+        readonly WiniumDriver driver;
+        readonly ILog debugLog;
 
         public WiniumMethods(WiniumDriver driver, ILog log) {
             this.driver = driver;
             debugLog = log;
         }
 
-        /**
-         * Takes in the string of the element name that can be found from inspect.exe from Windows SDK
-         * Will throw exception if element name is not found. Always use Name if the element is named
-         */
-        public void clickByName(string elementName) { // checks if the element is present multiple times review later to make sure that it is working efficiently
-            IWebElement element = null;
-            method = MethodBase.GetCurrentMethod().Name;
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    element = driver.FindElementByName(elementName);
 
-                    if (element != null) {
-                        break;
-                    }
-                } catch (NoSuchElementException e) {
-                    debugLog.Info(method + " ", e);
-                    Thread.Sleep(1000);
-                }
-            }
-            for (int i = 1; i <= 5; i++) { // checks if the element is enabled, only happens if something has a name, but is not clickable
-                try {
-                    if (element.Enabled == true) {
-                        debugLog.Info(method + " " + elementName + " " + "Clicked");
-                        element.Click();
-                        break;
-                    }
-                } catch (NoSuchElementException e) {
-                    debugLog.Info(method + " ", e);
-                }catch(StaleElementReferenceException e) {
-                    debugLog.Info(method + " ", e);
-                }
-            }
-        }
-        /**
-     * Takes in the string of the element name that can be found from inspect.exe from Windows SDK and a input string to send to the field 
-     * Will throw exception if element name is not found or is a field that cannot be edited. Always use Name if the element is named
-     */
-        public void sendKeysByName(string elementName, string input) { //TODO: fix the method because it needs to stop throwing errors on every time
-            IWebElement element = null;
+        public IWebElement Locate(By by) {
             method = MethodBase.GetCurrentMethod().Name;
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    element = driver.FindElementByName(elementName); break;
-                } catch (NoSuchElementException e) {
-                    debugLog.Info(method + " ", e);
-                    Thread.Sleep(1000);
-                }
-            }
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    if (element.Enabled == true) {
-                        element.SendKeys(input);
-                        debugLog.Info(method + " " + elementName + " " + "Sent keys");
-                        break;
-                    }
-                } catch (NoSuchElementException e) {
-                    Thread.Sleep(1000);
-                    debugLog.Info(method + " ", e); ;
-                }
-            }
-        }
-        /**
-         * Takes in the string of the element Id that can be found from inspect.exe from Windows SDK and a input string to send to the field
-         * Will throw exception if element name is not found or is a field that cannot be edited.
-         */
-        public void sendKeysById(string elementId, string input) { //TODO: fix the method because it needs to stop throwing errors on every time
-            IWebElement element = null;
-            method = MethodBase.GetCurrentMethod().Name;
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    element = driver.FindElementById(elementId); break;
-                } catch (Exception e) {
-                    debugLog.Info(method + " ", e);
-                    Thread.Sleep(1000);
-                }
-            }
-            for (int i = 1; i <= 10; i++) {
-                try {
-                    if (element.Enabled == true) {
-                        element.SendKeys(input);
-                        print(method, " Keys sending" + "'"+input+"'");
-                        break;
-                    }
-                } catch (Exception e) {
-                    debugLog.Info(method + e.StackTrace);
-                    debugLog.Info(method + " ", e); ;
-                }
-            }
-        }
-        /**
-         * Got rid of the for loops for checking if the elements are enabled
-         */
-        public void clickByNameInTree(IWebElement parent, string elementName) {
-            var element = findByName(parent, elementName);
             try {
-                if (element.Enabled == true) {
-                    element.Click();
-                    debugLog.Info(method + " " + elementName + " Clicked");
+                IWebElement element = driver.FindElement(by);
+                print(method, by.ToString() + " Has been Located");
+                if (element != null) {
+                    return element;
                 }
+                throw new ElementNullException();
             } catch (NoSuchElementException e) {
-                printError(method, null, e);
-
+                print(method, " Failed on " + method + "Finding element" + by.ToString() + e.Source);
+                throw new AssertFailedException("Failed on " + method + "Finding element" + by.ToString());
             }
+            throw new ElementNullException();
         }
-        public void clickByIdInTree(IWebElement parent, string elementName) {
-            var element = findById(parent, elementName);
+        public IWebElement Locate(By by, IWebElement parent) {
+            method = MethodBase.GetCurrentMethod().Name;
             try {
-                if (element.Enabled == true) {
-                    element.Click();
-                    debugLog.Info(method + " " + elementName + " Clicked");
+                IWebElement element = parent.FindElement(by);
+                print(method, by.ToString() + " Has been Located");
+                if (element != null) {
+                    return element;
                 }
+                throw new ElementNullException();
             } catch (NoSuchElementException e) {
-                printError(method, null, e);
+                print(method, " Failed on " + method + " Finding element" + by.ToString() + e.Source);
+                throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
             }
+            throw new ElementNullException();
         }
-        public IWebElement findById(IWebElement parent, string elementName) {
-            IWebElement element = null;
+        public void Click(By by) {
             method = MethodBase.GetCurrentMethod().Name;
-
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    element = parent.FindElement(By.Id(elementName));
-                    break;
-                } catch (NoSuchElementException e) {
-                    debugLog.Info(method + " ", e);
-                    Thread.Sleep(1000);
+            try {
+                var element = Locate(by);
+                if (element.Enabled) {
+                    element.Click();
+                    print(method, by.ToString() + " Clicked");
                 }
+            } catch (StaleElementReferenceException) {
+                print(method, "Could not click element " + by.ToString());
+                throw new AssertFailedException(method + "Could not click element " + by.ToString());
             }
-            return element;
         }
-        public IWebElement findByName(IWebElement parent, string elementName) {
-            IWebElement element = null;
+        public void Click(By by, IWebElement parent) {
             method = MethodBase.GetCurrentMethod().Name;
-            for (int i = 1; i <= 5; i++) {
-                try {
-                    element = parent.FindElement(By.Name(elementName));
-                    break;
-                } catch (NoSuchElementException e) {
-                    debugLog.Info(method + " ", e);
-                    Thread.Sleep(1000);
+            try {
+                var element = Locate(by, parent);
+                if (element.Enabled) {
+                    element.Click();
+                    print(method, by.ToString() + " Clicked");
                 }
+            } catch (StaleElementReferenceException) {
+                print(method, "Could not click element " + by.ToString());
+                throw new AssertFailedException(method + "Could not click element " + by.ToString());
             }
-
-            return element;
         }
-        /**
-         * Checks to see if there is already an instance of Intact running, if so Kills it so a new intact test can run
-         * TODO: SEE IF THERE IS A WAY TO DISPOSE OF THE APPLICATION WITHOUT KILLING
-         */
+        public void SendKeys(By by, string input) {
+            method = MethodBase.GetCurrentMethod().Name;
+            try {
+                var element = Locate(by);
+                if (element.Enabled) {
+                    element.SendKeys(input);
+                    print(method, by.ToString() + " sent " + input);
+                }
+            } catch (StaleElementReferenceException) {
+                print(method, "Could not send to element " + by.ToString());
+                throw new AssertFailedException(method + "Could not send to element " + by.ToString());
+            } catch (InvalidElementStateException) {
+                print(method, " element is not able to recieve keys" + by.ToString());
+                throw new AssertFailedException(method + " element is not able to recieve keys" + by.ToString());
+            }
+        }
+        public void SendKeys(By by, string input, IWebElement parent) {
+            method = MethodBase.GetCurrentMethod().Name;
+            try {
+                var element = Locate(by, parent);
+                if (element.Enabled) {
+                    element.SendKeys(input);
+                    print(method, by.ToString() + " sent " + input);
+                }
+            } catch (StaleElementReferenceException) {
+                print(method, "Could not send to element " + by.ToString());
+                throw new AssertFailedException(method + "Could not send to element " + by.ToString());
+            } catch (InvalidElementStateException) {
+                print(method, " element is not able to recieve keys" + by.ToString());
+                throw new AssertFailedException(method + " element is not able to recieve keys" + by.ToString());
+            }
+        }
         public bool IsElementPresent(By by) {
+            method = MethodBase.GetCurrentMethod().Name;
             try {
-                driver.FindElement(by);
-                print(method, by.ToString() + " found");
+                Locate(by);
+                print(method, " Element is present");
                 return true;
             } catch (NoSuchElementException) {
-                print(method, by.ToString() + " not present");
                 return false;
             }
         }
@@ -181,10 +122,10 @@ namespace WiniumTests {
         }
 
 
-        public void print(string method, string toPrint) {
-            debugLog.Info(method + " " + toPrint);
+        public void print(string method, string toPrint = "", Exception e = null) {
+            debugLog.Info(method + " " + toPrint + " " + e);
         }
-        public void printError(string method, string toPrint, Exception e) {
+        public void PrintError(string method, Exception e, string toPrint = "") {
             debugLog.Info(method + " " + e + " " + toPrint);
         }
 
