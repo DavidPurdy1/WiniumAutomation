@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Winium;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing.Imaging;
 using System.IO;
@@ -19,7 +20,6 @@ namespace WiniumTests {
         string method;
         readonly DesktopOptions options = new DesktopOptions();
         readonly WiniumMethods m;
-        readonly bool needToSetDB = false;
         readonly string driverPath;
         readonly ILog debugLog;
 
@@ -51,9 +51,12 @@ namespace WiniumTests {
         }
         /**THIS METHOD HAS TO BE RAN FIRST WITH TESTS, Logs into intact with admin login
          */
-        public void loginToIntact() {
+        public void loginToIntact() { //TODO: have to add connectToRemoteDesktop
             method = MethodBase.GetCurrentMethod().Name;
             debugLog.Info(method + " Started");
+            //both of these will most likely stay false all the time, but we can test either of them by changing value in app.config
+            bool needToSetDB = ConfigurationManager.AppSettings.Get("setDataBase") == "true"; ;
+            bool connectToRemote = ConfigurationManager.AppSettings.Get("connectToRemote") == "true";
             Thread.Sleep(7000);
             m.sendKeysById("", "admin");
             if (!needToSetDB) {
@@ -65,7 +68,7 @@ namespace WiniumTests {
             debugLog.Info(method + " Finished");
         }
         //UNTESTED
-        public void setDatabaseInformation() {
+        private void setDatabaseInformation() {
             method = MethodBase.GetCurrentMethod().Name;
             debugLog.Info(method + " Started");
             m.clickByName("&Settings..");
@@ -155,72 +158,71 @@ namespace WiniumTests {
         public void createDocument(int? numOfDocs = 1, bool isPDF = true, string docPath = "") {
             method = MethodBase.GetCurrentMethod().Name;
             print(method, "Started");
+            Thread.Sleep(2000);
+            for (int i = 0; i < numOfDocs; i++) {
 
-            driver.FindElement(By.Name("Add Document")).Click();
 
-            //adding note 
-            driver.FindElementById("btnNotes").Click();
-            driver.FindElementById("btnAddNote").Click();
-            driver.FindElementById("txtNote").SendKeys("TEST NOTE");
-            driver.FindElementById("btnOK").Click();
-            driver.FindElementById("btnNotes").Click();
+                driver.FindElement(By.Name("Add Document")).Click();
+                Thread.Sleep(1000);
+                //adding note 
+                driver.FindElementById("btnNotes").Click();
+                driver.FindElementById("btnAddNote").Click();
+                driver.FindElementById("rchkPrivate").Click();
+                driver.FindElementById("txtNote").SendKeys("TEST NOTE");
+                driver.FindElementById("btnOK").Click();
+                driver.FindElementById("btnNotes").Click();
 
-            //add document button (+ icon)
-            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            driver.FindElement(By.Id("lblType")).Click();
-            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            action.MoveByOffset(20, -40).Click().MoveByOffset(20, 60).Click().Build().Perform();
-            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+                //add document button (+ icon)
+                print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+                driver.FindElement(By.Id("lblType")).Click();
+                print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+                action.MoveByOffset(20, -40).Click().MoveByOffset(20, 60).Click().Build().Perform();
+                print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
-            //find the document to add in file explorer
-            //configure docpath in app.config, takes arg of pdf or tif 
-            if (docPath.Length < 1) {
-                docPath = ConfigurationManager.AppSettings.Get("AddDocumentStorage");
-            }
-            m.sendKeysById("1001", docPath);
-            print(method, "Go to \"" + docPath + "\"");
-            driver.FindElement(By.Name("Go to \""+ docPath + "\"")).Click();
+                //find the document to add in file explorer
+                //configure docpath in app.config, takes arg of pdf or tif 
+                if (docPath.Length < 1) {
+                    docPath = ConfigurationManager.AppSettings.Get("AddDocumentStorage");
+                }
+                m.sendKeysById("1001", docPath);
+                print(method, "Go to \"" + docPath + "\"");
+                driver.FindElement(By.Name("Go to \"" + docPath + "\"")).Click();
 
-            var rand = new Random();
+                var rand = new Random();
                 if (isPDF) {
                     Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(driver.FindElementByName("Files of type:"));
                     filesOfType.SendKeys("p");
-                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("PDF").Build().Perform();
+                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("PDF" + rand.Next(6).ToString()).Build().Perform();
                     driver.FindElementById("1").Click();
                 } else {
-                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("TIF" + rand.Next(3).ToString()).Build().Perform();
+                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("TIF" + rand.Next(6).ToString()).Build().Perform();
+                    driver.FindElementById("1").Click();
                 }
-            
-            Thread.Sleep(3000);
 
-            //rotate
-            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            driver.FindElement(By.Id("lblType")).Click();
-            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            action.MoveByOffset(375, -37).Click().Click().Build().Perform();
-            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+                Thread.Sleep(3000);
 
-            //edit custom fields
-            driver.FindElement(By.Name("StringQA")).SendKeys("STRING TEST");
-            driver.FindElement(By.Name("DateQA")).SendKeys("1/1/3000");
-            driver.FindElement(By.Name("NumberQA")).SendKeys("7");
+                //rotate
+                driver.FindElement(By.Id("lblType")).Click();
+                action.MoveByOffset(375, -37).Click().Click().Build().Perform();
 
-            //edit fields
-            window = driver.FindElement(By.Id("frmDocument"));
-            m.findById(window, "dtcExpireDate").SendKeys("1/1/3000");
-            driver.FindElement(By.Id("btnOK")).Click();
-            driver.FindElementById("1").Click();
-            Thread.Sleep(3000);
-            m.findById(window, "txtAuthor").SendKeys("AUTHOR TEST");
-            driver.FindElement(By.Id("btnOK")).Click();
-            driver.FindElementById("1").Click();
-            Thread.Sleep(3000);
-            m.findById(window, "txtSummary").SendKeys("SUMMARY TEST");
+                //edit custom fields
+                print(method, "custom fields");
+                driver.FindElement(By.Id("lblType")).Click();
+                action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
+                    MoveByOffset(0, 20).Click().SendKeys("7").MoveByOffset(0, 20).Click().SendKeys("string").Build().Perform();
 
-            //save and quit
-            driver.FindElement(By.Id("btnSave")).Click();
-            driver.FindElement(By.Id("btnClose")).Click();
-            print(method, "Finished");
+                //edit fields
+                print(method, "edit fields ");
+                driver.FindElement(By.Id("lblType")).Click();
+                action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("AUTHOR TEST").
+                    MoveByOffset(0, 40).Click().SendKeys("SUMMARY TEST").Build().Perform();
+
+                //save and quit
+                print(method, "save and quit");
+                driver.FindElement(By.Id("btnSave")).Click();
+                driver.FindElement(By.Id("btnClose")).Click();
+                print(method, "Finished");
+            }
         }
         public void openOrganizer() {
             method = MethodBase.GetCurrentMethod().Name;
@@ -255,7 +257,7 @@ namespace WiniumTests {
         }
         /**Should not call this method in tests
          */
-        public void addDocBatchReview() {
+        private void addDocBatchReview() {
             driver.FindElementById("btnAddToDoc").Click();
             driver.FindElementByName("DEFAULT DEF").Click();
             driver.FindElementByName("DEFAULT DEFINITION TEST").Click();
@@ -268,7 +270,7 @@ namespace WiniumTests {
             driver.FindElementByName("Save").Click();
             driver.FindElementByName("Close").Click();
         }
-        public void BatchAttribution() {
+        private void BatchAttribution() {
             window = driver.FindElement(By.Id("frmBatchReview"));
             window.FindElement(By.Id("btnAttribute")).Click();
             Thread.Sleep(2000);
@@ -298,8 +300,7 @@ namespace WiniumTests {
             m.clickByNameInTree(window, "InZone");
             window = driver.FindElement(By.Id("frmInZoneMain"));
             m.clickByIdInTree(window, "btnCollectScan");
-            Thread.Sleep(5000);
-            print(method, DateTime.Now.ToString());
+            Thread.Sleep(9000);
             bool hasPassed = false;
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
             foreach (string s in Directory.GetFiles(startPath)) {
@@ -309,7 +310,6 @@ namespace WiniumTests {
                     break;
                 }
             }
-            print(method, DateTime.Now.ToString());
             //bool hasPassed = m.IsElementPresent(By.Name("CleanFreak InZone Test"));
             m.clickByIdInTree(window, "btnCommit");
             m.clickByIdInTree(window, "btnClose");
@@ -334,12 +334,12 @@ namespace WiniumTests {
          * 
          * TODO: MAKE IT DELETE THE IMAGES EACH TIME THAT WAY YOU DON'T GET MORE AND MORE IMAGES ON THE DOC FROM OTHER FAILED TESTS. TRY DOING THIS IN IMAGETODOC.
          */
-        public void failLog() {
+        public void failLog(string testName) {
             string folderPath = ConfigurationManager.AppSettings.Get("AutomationScreenshots");
-            var rand = new Random();
-            var path = Path.Combine(folderPath, "test " + rand.Next(100).ToString());
+            string path = Path.Combine(folderPath, testName +"_" + DateTime.Now.Month.ToString() +"-" + DateTime.Now.Day.ToString() +"-" + DateTime.Now.Year.ToString() +
+                "_" + DateTime.Now.Hour.ToString() +"-" + DateTime.Now.Minute.ToString()+"-" + DateTime.Now.Second.ToString());
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
-
+            
         }
         /**Take images from folder and put them on a word doc
          * Put at the end of tests.
@@ -422,15 +422,30 @@ namespace WiniumTests {
             }
         }
 
+        public void writeFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
+            using (StreamWriter file =
+            new StreamWriter(@"C:\Automation\failedTestsDocuments\FailedTests.txt", true)) {
+                file.WriteLine(DateTime.Now.ToString() +"| " + testsFailedNames.Count.ToString() + " Tests failed | " + testsPassedNames.Count.ToString() + " Tests passed |");
+                foreach(string name in testsFailedNames) {
+                    file.WriteLine(name + " failed" );
+                }
+                foreach (string name in testsPassedNames) {
+                    file.WriteLine(name + " passed");
+                }
+                file.WriteLine(" ");
+            }
+        }
 
-        /**
-         * Prints to the log found in the temp folder
+        /**For debug
          */
-        public void print(string method, string toPrint) {
+        private void print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }
-        public void printError(string method, string toPrint, Exception e) {
+        private void printError(string method, string toPrint, Exception e) {
             debugLog.Info(method + " " + e + " " + toPrint);
+        }
+        private void printCursor() {
+            print(method, "x: " + Cursor.Position.X.ToString() + " y: " + Cursor.Position.Y.ToString());
         }
     }
 }

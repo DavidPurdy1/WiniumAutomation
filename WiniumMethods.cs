@@ -44,6 +44,8 @@ namespace WiniumTests {
                     }
                 } catch (NoSuchElementException e) {
                     debugLog.Info(method + " ", e);
+                }catch(StaleElementReferenceException e) {
+                    debugLog.Info(method + " ", e);
                 }
             }
         }
@@ -112,7 +114,6 @@ namespace WiniumTests {
                 if (element.Enabled == true) {
                     element.Click();
                     debugLog.Info(method + " " + elementName + " Clicked");
-
                 }
             } catch (NoSuchElementException e) {
                 printError(method, null, e);
@@ -157,6 +158,7 @@ namespace WiniumTests {
                     Thread.Sleep(1000);
                 }
             }
+
             return element;
         }
         /**

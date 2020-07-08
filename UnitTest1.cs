@@ -14,12 +14,11 @@ namespace WiniumTests {
         public string method;
         public static UserMethods user;
         private static TestContext testContext;
-        List<string> testsFailedNames = new List<string>();
-        List<string> testsPassedNames = new List<string>();
-
+        static List<string> testsFailedNames = new List<string>();
+        static List<string> testsPassedNames = new List<string>();
 
         [AssemblyInitialize]
-        public static void TestingInit(TestContext _testContext) {
+        public static void TestingInit(TestContext _testContext) { //something having to do with the testContext is wrong
             testContext = _testContext;
             foreach (Process app in Process.GetProcesses()) {
                 if (app.ProcessName.Equals("Intact")) {
@@ -37,19 +36,19 @@ namespace WiniumTests {
         }
         [TestCleanup]
         public void TestCleanup() { //if the test is failed then it has to close out of the current window and return to the intact main 
-            if (testContext.CurrentTestOutcome == UnitTestOutcome.Failed) {
-                testsFailedNames.Add(testContext.TestName);
-                user.failLog();
-                user.onFail();
-                print(method, "FAILED *****************************************");
-            } else {
+            if (testContext.CurrentTestOutcome == UnitTestOutcome.Passed) {
                 testsPassedNames.Add(testContext.TestName);
                 print(method, "PASSED *****************************************");
+            } else {
+                testsFailedNames.Add(testContext.TestName);
+                user.failLog(testContext.TestName);
+                user.onFail();
+                print(method, "FAILED *****************************************");
             }
         }
         [ClassCleanup]
         public static void Cleanup() { //add test report at the end, either excel over time or something to record test data.
-            
+            user.writeFailFile(testsFailedNames, testsPassedNames);
             user.closeDriver();
         }
 
