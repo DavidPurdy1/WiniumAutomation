@@ -13,13 +13,12 @@ namespace WiniumTests {
         static readonly ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
         public string method;
         public static UserMethods user;
-        private static TestContext testContext;
         static List<string> testsFailedNames = new List<string>();
         static List<string> testsPassedNames = new List<string>();
+        public TestContext TestContext { get; set; }
 
         [AssemblyInitialize]
-        public static void TestingInit(TestContext _testContext) { //TODO: something having to do with the testContext is wrong
-            testContext = _testContext;
+        public static void TestingInit(TestContext testContext) {
             foreach (Process app in Process.GetProcesses()) {
                 if (app.ProcessName.Equals("Intact")) {
                     app.Kill();
@@ -32,24 +31,24 @@ namespace WiniumTests {
         }
         [TestInitialize]
         public void TestInit() {
-            print(testContext.TestName, "STARTED *********************************************");
+            print(TestContext.TestName, "STARTED *********************************************");
         }
         [TestCleanup]
         public void TestCleanup() { //if the test is failed then it has to close out of the current window and return to the intact main look at onFail in usermethods
-            if (testContext.CurrentTestOutcome == UnitTestOutcome.Passed) {
-                testsPassedNames.Add(testContext.TestName);
+            if (TestContext.CurrentTestOutcome == UnitTestOutcome.Passed) {
+                testsPassedNames.Add(TestContext.TestName);
                 print(method, "PASSED *****************************************");
             } else {
-                testsFailedNames.Add(testContext.TestName);
-                user.failLog(testContext.TestName);
-                user.onFail();
+                testsFailedNames.Add(TestContext.TestName);
+                string imagePath = user.onFail(TestContext.TestName); //alt f4 closes the top window so you can do that 
                 print(method, "FAILED *****************************************");
             }
         }
         [ClassCleanup]
-        public static void Cleanup() { //add test report at the end, either excel over time or something to record test data.
+        public static void Cleanup() { 
             user.writeFailFile(testsFailedNames, testsPassedNames);
             user.closeDriver();
+            
         }
 
 
@@ -86,22 +85,15 @@ namespace WiniumTests {
             user.loginToIntact();
             user.createDocument();
         }
-
-
         [TestMethod]
-        public void testAll() {
+        public void TEST7_SEARCH() {
             method = MethodBase.GetCurrentMethod().Name;
-            print(method, "Started Last Test");
-            TEST1_LOGIN();
-            TEST2_INZONE();
-            TEST3_BATCHREVIEW();
-            
-            print(method, "All TESTS HAVE PASSED*********************************************");
+            user.loginToIntact();
+            if(!user.search("def")) {
+               throw new AssertFailedException(method + " no search results found");
+            }
         }
 
-        /**
-         * Prints to the log found in the temp folder
-         */
         public void print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }

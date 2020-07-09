@@ -17,7 +17,6 @@ namespace WiniumTests {
             debugLog = log;
         }
 
-
         public IWebElement Locate(By by) {
             method = MethodBase.GetCurrentMethod().Name;
             try {
@@ -26,12 +25,12 @@ namespace WiniumTests {
                 if (element != null) {
                     return element;
                 }
-                throw new ElementNullException();
             } catch (NoSuchElementException e) {
                 print(method, " Failed on " + method + "Finding element" + by.ToString() + e.Source);
                 throw new AssertFailedException("Failed on " + method + "Finding element" + by.ToString());
             }
-            throw new ElementNullException();
+            print(method, "Was not NoSuchElement");
+            throw new AssertFailedException(method + " Was not NoSuchElement");
         }
         public IWebElement Locate(By by, IWebElement parent) {
             method = MethodBase.GetCurrentMethod().Name;
@@ -41,12 +40,12 @@ namespace WiniumTests {
                 if (element != null) {
                     return element;
                 }
-                throw new ElementNullException();
             } catch (NoSuchElementException e) {
                 print(method, " Failed on " + method + " Finding element" + by.ToString() + e.Source);
                 throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
             }
-            throw new ElementNullException();
+            print(method, "Was not NoSuchElement");
+            throw new AssertFailedException(method + " Was not NoSuchElement");
         }
         public void Click(By by) {
             method = MethodBase.GetCurrentMethod().Name;
@@ -59,6 +58,9 @@ namespace WiniumTests {
             } catch (StaleElementReferenceException) {
                 print(method, "Could not click element " + by.ToString());
                 throw new AssertFailedException(method + "Could not click element " + by.ToString());
+            } catch (ElementNotVisibleException) {
+                print(method, "Could not click element: Not on Screen " + by.ToString());
+                throw new AssertFailedException(method + "Could not click element: Not on Screen " + by.ToString());
             }
         }
         public void Click(By by, IWebElement parent) {
@@ -72,6 +74,9 @@ namespace WiniumTests {
             } catch (StaleElementReferenceException) {
                 print(method, "Could not click element " + by.ToString());
                 throw new AssertFailedException(method + "Could not click element " + by.ToString());
+            } catch (ElementNotVisibleException) {
+                print(method, "Could not click element: Not on Screen " + by.ToString());
+                throw new AssertFailedException(method + "Could not click element: Not on Screen " + by.ToString());
             }
         }
         public void SendKeys(By by, string input) {
@@ -88,6 +93,9 @@ namespace WiniumTests {
             } catch (InvalidElementStateException) {
                 print(method, " element is not able to recieve keys" + by.ToString());
                 throw new AssertFailedException(method + " element is not able to recieve keys" + by.ToString());
+            } catch (ElementNotVisibleException) {
+                print(method, "Could not send to element: Not on Screen " + by.ToString());
+                throw new AssertFailedException(method + "Could not send element: Not on Screen " + by.ToString());
             }
         }
         public void SendKeys(By by, string input, IWebElement parent) {
@@ -104,6 +112,9 @@ namespace WiniumTests {
             } catch (InvalidElementStateException) {
                 print(method, " element is not able to recieve keys" + by.ToString());
                 throw new AssertFailedException(method + " element is not able to recieve keys" + by.ToString());
+            } catch (ElementNotVisibleException) {
+                print(method, "Could not send to element: Not on Screen " + by.ToString());
+                throw new AssertFailedException(method + "Could not send element: Not on Screen " + by.ToString());
             }
         }
         public bool IsElementPresent(By by) {
@@ -112,8 +123,8 @@ namespace WiniumTests {
                 Locate(by);
                 print(method, " Element is present");
                 return true;
-            } catch (NoSuchElementException) {
-                return false;
+            } catch (NoSuchElementException e) {
+                throw new AssertFailedException(method + " Failed on IsElement Present" + e.ToString()); 
             }
         }
         public void closeDriver() {

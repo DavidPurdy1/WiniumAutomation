@@ -18,6 +18,7 @@ namespace WiniumTests {
         IWebElement window;
         WiniumDriver driver;
         string method;
+        string mainWindowHandle;
         readonly DesktopOptions options = new DesktopOptions();
         readonly WiniumMethods m;
         readonly string driverPath;
@@ -65,6 +66,8 @@ namespace WiniumTests {
                 setDatabaseInformation();
                 m.Click(By.Name("&Logon"));
             }
+            Thread.Sleep(2000);
+            mainWindowHandle = driver.CurrentWindowHandle;
             print(method, " Finished");
         }
         //UNTESTED
@@ -140,7 +143,7 @@ namespace WiniumTests {
             m.Click(By.Name("&Close"));
             print(method, "Finished");
         }
-        /** //TODO: Need to refine createDocument a bit
+        /**
         * Takes in isPDF telling whether or not it is a PDF or TIF and then numOfDocs for how many to add.
         * Going to take a random document from some preset path and with that it is going to add that document either pdf or not to a random definition and type with random metadata.
         */
@@ -187,7 +190,6 @@ namespace WiniumTests {
                     action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("TIF" + rand.Next(6).ToString()).Build().Perform();
                     m.Click(By.Id("1"));
                 }
-
                 Thread.Sleep(3000);
 
                 //rotate
@@ -211,6 +213,20 @@ namespace WiniumTests {
                 m.Click(By.Id("btnSave"));
                 m.Click(By.Id("btnClose"));
                 print(method, "Finished");
+            }
+        }
+        public bool search(string searchInput) {
+            window = m.Locate(By.Id("frmIntactMain"));
+            window = m.Locate(By.Name("radMenu1"), window);
+            m.SendKeys(By.ClassName("WindowsForms10.EDIT.app.0.5c39d4"), searchInput, window);
+            m.Click(By.Name("Search"), window);
+            if (m.IsElementPresent(By.ClassName("WindowsForms10.MDICLIENT.app.0.5c39d4"))) {
+                return true;
+            }else if (m.IsElementPresent(By.Name("No search results found."))) {
+                m.Click(By.Name("OK"));
+                return false;
+            } else {
+                throw new Exception("Error in Search");
             }
         }
         public void openOrganizer() {
@@ -258,6 +274,27 @@ namespace WiniumTests {
             Thread.Sleep(2000);
             window = m.Locate(By.Id("frmInsertPagesVersion"));
             m.Click(By.Id("btnOK"), window);
+            m.Locate(By.Id("frmDocument"));
+
+            //rotate 
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            m.Click(By.Id("lblType"));
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            action.MoveByOffset(375, -37).Click().Click().Click().Click().Click().Build().Perform();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+
+            //custom fields
+            print(method, "custom fields");
+            driver.FindElement(By.Id("lblType")).Click();
+            action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
+                MoveByOffset(0, 20).Click().SendKeys("10").MoveByOffset(0, 20).Click().SendKeys("BATCH REVIEW ADD").Build().Perform();
+
+            //edit fields
+            print(method, "edit fields ");
+            driver.FindElement(By.Id("lblType")).Click();
+            action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH AUTHOR TEST").
+                MoveByOffset(0, 40).Click().SendKeys("BATCH ADDING TO ANOTHER DOCUMENT TEST").Build().Perform();
+
             m.Click(By.Name("Save"));
             m.Click(By.Name("Close"));
         }
@@ -266,20 +303,32 @@ namespace WiniumTests {
             m.Click(By.Id("btnAttribute"), window);
             Thread.Sleep(2000);
             window = m.Locate(By.Id("frmDocument"));
+
+            //rotate 
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             m.Click(By.Id("lblType"));
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             action.MoveByOffset(375, -37).Click().Click().Build().Perform();
             print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
+            //custom fields
+            print(method, "custom fields");
+            driver.FindElement(By.Id("lblType")).Click();
+            action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
+                MoveByOffset(0, 20).Click().SendKeys("10").MoveByOffset(0, 20).Click().SendKeys("BATCH REVIEW ATTRIBUTION").Build().Perform();
+            
+            //edit fields
+            print(method, "edit fields ");
+            driver.FindElement(By.Id("lblType")).Click();
+            action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH AUTHOR TEST").
+                MoveByOffset(0, 40).Click().SendKeys("BATCH ATTRIBUTING A DOCUMENT TEST").Build().Perform();
+
             m.Click(By.Id("btnSave"), window);
             m.Click(By.Id("btnClose"), window);
         }
-        /**Collects documents by all definition from InZone.
-         * 
-         * TODO: Add if inzone doesn't recognize the definition come in fail the test
+        /**Collects documents by all definition from InZone. Returns true if the definition recognized is the same name as a file in directory
          */
-        public bool getDocumentsFromInZone() { //This is supposed to return true if the document has been identified, UNTESTED RIGHT NOW
+        public bool getDocumentsFromInZone() {
             method = MethodBase.GetCurrentMethod().Name;
             addDocsToCollector();
             window = m.Locate(By.Id("frmIntactMain"));
@@ -296,7 +345,7 @@ namespace WiniumTests {
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
             foreach (string s in Directory.GetFiles(startPath)) {
                 string test = Path.GetFileName(s);
-                if (m.IsElementPresent(By.Name(test.Substring(0,test.Length-4)))) {
+                if (m.IsElementPresent(By.Name(test.Substring(0, test.Length - 4)))) {
                     hasPassed = true;
                     break;
                 }
@@ -325,12 +374,55 @@ namespace WiniumTests {
          * 
          * TODO: MAKE IT DELETE THE IMAGES EACH TIME THAT WAY YOU DON'T GET MORE AND MORE IMAGES ON THE DOC FROM OTHER FAILED TESTS. TRY DOING THIS IN IMAGETODOC.
          */
-        public void failLog(string testName) {
+        public string onFail(string testName) {
             string folderPath = ConfigurationManager.AppSettings.Get("AutomationScreenshots");
             string path = Path.Combine(folderPath, testName +"_" + DateTime.Now.Month.ToString() +"-" + DateTime.Now.Day.ToString() +"-" + DateTime.Now.Year.ToString() +
                 "_" + DateTime.Now.Hour.ToString() +"-" + DateTime.Now.Minute.ToString()+"-" + DateTime.Now.Second.ToString());
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
-            
+
+            if (m.IsElementPresent(By.Id("frmDocument"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+            }
+            else if (m.IsElementPresent(By.Id("frmInZoneMain"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+            }
+            else if (m.IsElementPresent(By.Id("frmBatchReview"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+            }
+            else if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+            }
+            else if (m.IsElementPresent(By.Id("frmRulesEdit"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+            }
+            else if (m.IsElementPresent(By.Id("frmZoneConfig"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+            }
+            else if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
+                driver.Close();
+                Thread.Sleep(2000);
+            }
+            driver.SwitchTo().Window(mainWindowHandle);
+            return path;
+        }
+        public void writeFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
+            using (StreamWriter file =
+            new StreamWriter(@"C:\Automation\failedTestsDocuments\FailedTests.txt", true)) {
+                file.WriteLine(DateTime.Now.ToString() + "| " + testsFailedNames.Count.ToString() + " Tests failed | " + testsPassedNames.Count.ToString() + " Tests passed |");
+                foreach (string name in testsFailedNames) {
+                    file.WriteLine(name + " failed");
+                }
+                foreach (string name in testsPassedNames) {
+                    file.WriteLine(name + " passed");
+                }
+                file.WriteLine(" ");
+            }
         }
         /**Take images from folder and put them on a word doc
          * Put at the end of tests.
@@ -375,57 +467,6 @@ namespace WiniumTests {
         /** Have to add all scenarios where there is a new window open
          * This is to close out and get back to the window for the next test.
          */ 
-        public void onFail() {
-            if(m.IsElementPresent(By.Id("frmDocument"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-                return;
-            }
-            if (m.IsElementPresent(By.Id("frmInZoneMain"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-                return;
-            }
-            if (m.IsElementPresent(By.Id("frmBatchReview"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-                return;
-            }
-            if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-                return;
-            }
-            if (m.IsElementPresent(By.Id("frmRulesEdit"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-                return;
-            }
-            if (m.IsElementPresent(By.Id("frmZoneConfig"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-                return;
-            }
-            if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-                return;
-            }
-        }
-
-        public void writeFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
-            using (StreamWriter file =
-            new StreamWriter(@"C:\Automation\failedTestsDocuments\FailedTests.txt", true)) {
-                file.WriteLine(DateTime.Now.ToString() +"| " + testsFailedNames.Count.ToString() + " Tests failed | " + testsPassedNames.Count.ToString() + " Tests passed |");
-                foreach(string name in testsFailedNames) {
-                    file.WriteLine(name + " failed" );
-                }
-                foreach (string name in testsPassedNames) {
-                    file.WriteLine(name + " passed");
-                }
-                file.WriteLine(" ");
-            }
-        }
 
         /**For debug
          */
