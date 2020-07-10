@@ -118,20 +118,12 @@ namespace WiniumTests {
             }
         }
         public bool IsElementPresent(By by) {
-            method = MethodBase.GetCurrentMethod().Name;
-            try {
-                Locate(by);
-                print(method, " Element is present");
-                return true;
-            } catch (NoSuchElementException e) {
-                throw new AssertFailedException(method + " Failed on IsElement Present" + e.ToString()); 
-            }
+            return driver.FindElements(by).Count > 0;
         }
         public void closeDriver() {
             driver.Quit();
             print(method, "DRIVER CLOSED");
         }
-
 
         public void print(string method, string toPrint = "", Exception e = null) {
             debugLog.Info(method + " " + toPrint + " " + e);

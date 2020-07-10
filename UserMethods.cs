@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Microsoft.Office.Interop.Word;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Winium;
@@ -58,7 +59,7 @@ namespace WiniumTests {
             //both of these will most likely stay false all the time, but we can test either of them by changing value in app.config
             bool needToSetDB = ConfigurationManager.AppSettings.Get("setDataBase") == "true"; ;
             bool connectToRemote = ConfigurationManager.AppSettings.Get("connectToRemote") == "true";
-            Thread.Sleep(7000);
+            Thread.Sleep(10000);
             m.SendKeys(By.Name(""), "admin");
             if (!needToSetDB) {
                 m.Click(By.Name("&Logon"));
@@ -158,8 +159,8 @@ namespace WiniumTests {
                 Thread.Sleep(1000);
                 //adding note 
                 m.Click(By.Id("btnNotes"));
-                m.Click(By.Id("rchkPrivate"));
                 m.Click(By.Id("btnAddNote"));
+                m.Click(By.Id("rchkPrivate"));
                 m.SendKeys(By.Id("txtNote"), "TEST NOTE");
                 m.Click(By.Id("btnOK"));
                 m.Click(By.Id("btnNotes"));
@@ -216,17 +217,23 @@ namespace WiniumTests {
             }
         }
         public bool search(string searchInput) {
+            method = MethodBase.GetCurrentMethod().Name;
             window = m.Locate(By.Id("frmIntactMain"));
             window = m.Locate(By.Name("radMenu1"), window);
             m.SendKeys(By.ClassName("WindowsForms10.EDIT.app.0.5c39d4"), searchInput, window);
             m.Click(By.Name("Search"), window);
-            if (m.IsElementPresent(By.ClassName("WindowsForms10.MDICLIENT.app.0.5c39d4"))) {
-                return true;
-            }else if (m.IsElementPresent(By.Name("No search results found."))) {
+
+            Thread.Sleep(1000);
+            if (m.IsElementPresent(By.Name("Quick Search"))) {
                 m.Click(By.Name("OK"));
+                print(method, "Result not found");
                 return false;
+            }else if (m.IsElementPresent(By.Id("frmBatchActionMain"))) {
+                print(method, " Result found");
+                return true;
             } else {
-                throw new Exception("Error in Search");
+                print(method, " Error in search");
+                throw new AssertFailedException(method + " Error in search");
             }
         }
         public void openOrganizer() {
@@ -338,7 +345,7 @@ namespace WiniumTests {
             m.Click(By.Name("InZone"), window);
             Thread.Sleep(2000);
             window = m.Locate(By.Id("frmInZoneMain"));
-            m.Click(By.Id("btnCollectScan"), window);
+            m.Click(By.Id("btnCollectSc"), window);
             Thread.Sleep(9000);
             bool hasPassed = false;
 
@@ -370,6 +377,35 @@ namespace WiniumTests {
                 print(method, "Starting or Ending path doesn't exist");
             }
         }
+
+        public void addRecognition() {
+            m.Click(By.Name("Recognize"));
+            window = m.Locate(By.Id("frmMainInteractive"));
+            window = m.Locate(By.Id("btnSelect"),window);
+            m.Click(By.Name("Select All"),window);
+            m.Click(By.Id("btnRecgonize"));
+            m.Click(By.Id("btnClose"));
+        }
+        //untested
+        public void testRecognition(string definitionName, string documentName, string input) { // test to make sure there are documents in recognize
+            //createDocument();
+            addRecognition();
+            openOrganizer();
+            m.Click(By.Name(definitionName));
+            window = m.Locate(By.Name(documentName));
+            action.DoubleClick(window).Build().Perform();
+            Thread.Sleep(2000);
+
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            m.Click(By.Id("lblType"));
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            action.MoveByOffset(470, -40).Click().Build().Perform();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+
+            window = m.Locate(By.Name("Find"));
+            window = m.Locate(By.Id("txtFind"),window);
+            m.SendKeys(By.Name(""), input, window);
+        }
         /** This is going to take a screenshot each time it is called and save it
          * 
          * TODO: MAKE IT DELETE THE IMAGES EACH TIME THAT WAY YOU DON'T GET MORE AND MORE IMAGES ON THE DOC FROM OTHER FAILED TESTS. TRY DOING THIS IN IMAGETODOC.
@@ -379,37 +415,12 @@ namespace WiniumTests {
             string path = Path.Combine(folderPath, testName +"_" + DateTime.Now.Month.ToString() +"-" + DateTime.Now.Day.ToString() +"-" + DateTime.Now.Year.ToString() +
                 "_" + DateTime.Now.Hour.ToString() +"-" + DateTime.Now.Minute.ToString()+"-" + DateTime.Now.Second.ToString());
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
-
-            if (m.IsElementPresent(By.Id("frmDocument"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-            }
-            else if (m.IsElementPresent(By.Id("frmInZoneMain"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-            }
-            else if (m.IsElementPresent(By.Id("frmBatchReview"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-            }
-            else if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-            }
-            else if (m.IsElementPresent(By.Id("frmRulesEdit"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-            }
-            else if (m.IsElementPresent(By.Id("frmZoneConfig"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-            }
-            else if (m.IsElementPresent(By.Id("frmAdminTypesInfo"))) {
-                driver.Close();
-                Thread.Sleep(2000);
-            }
-            driver.SwitchTo().Window(mainWindowHandle);
+            closeWindow();
             return path;
+        }
+        public void closeWindow() {
+            action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
+            print(method, " window closed");
         }
         public void writeFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
             using (StreamWriter file =

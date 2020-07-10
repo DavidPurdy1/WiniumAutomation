@@ -34,21 +34,20 @@ namespace WiniumTests {
             print(TestContext.TestName, "STARTED *********************************************");
         }
         [TestCleanup]
-        public void TestCleanup() { //if the test is failed then it has to close out of the current window and return to the intact main look at onFail in usermethods
+        public void TestCleanup() { 
             if (TestContext.CurrentTestOutcome == UnitTestOutcome.Passed) {
                 testsPassedNames.Add(TestContext.TestName);
                 print(method, "PASSED *****************************************");
             } else {
-                testsFailedNames.Add(TestContext.TestName);
-                string imagePath = user.onFail(TestContext.TestName); //alt f4 closes the top window so you can do that 
+                string imagePath = user.onFail(TestContext.TestName); 
+                testsFailedNames.Add(TestContext.TestName + " " + imagePath + " | ");
                 print(method, "FAILED *****************************************");
             }
         }
         [ClassCleanup]
         public static void Cleanup() { 
             user.writeFailFile(testsFailedNames, testsPassedNames);
-            user.closeDriver();
-            
+            user.closeDriver(); 
         }
 
 
@@ -83,17 +82,20 @@ namespace WiniumTests {
         public void TEST6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
             user.loginToIntact();
-            user.createDocument();
+            user.closeWindow();
         }
         [TestMethod]
-        public void TEST7_SEARCH() {
+        public void TEST7_SEARCH() { //fix printings
             method = MethodBase.GetCurrentMethod().Name;
             user.loginToIntact();
-            if(!user.search("def")) {
-               throw new AssertFailedException(method + " no search results found");
-            }
+            Assert.IsTrue(user.search("InZone"), " Search not found" ); 
         }
-
+        [TestMethod]
+        public void TEST8_RECOGNITION() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.loginToIntact();
+            user.testRecognition("DEFAULT DEF" , "DEFAULT DEFINITION TEST", "DEFAULT DEFINITION TEST");
+        }
         public void print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }
