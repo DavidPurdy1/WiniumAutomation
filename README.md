@@ -14,21 +14,24 @@
 - For Microsoft.Office.Interop, can only work on machines with office, have to add support where the screenshots will just create a new folder and go in there as well as what tests failed , maybe csv? instead of excel.
 
 - When more than a couple tests fail, most likely it is going to be a problem with the program, maybe implement removing the first test that failed if array of test is larger than a certain amount. Could be done by creating a playlist and then deciding what playlist to run/uninclude test somehow.
-----------------------------------------------------------------------------------------------------------------
 
 -have it clear out the images from the failed image folder after it creates the documents so it doesn't add more images to the fail log. Have it rerun the test on failure, but figure out how to have it use the failLog method on each step.
 
 -generate portfolios and that type of stuff
 
 -On each screen go through and add interaction with each button and blank to see if it throws an error or messes something up
+ 
+-verify that test resets are working on all screens!!
 
--Going through and testing every blank and scenario for the document attribution screen:: Can be reused 
+-Add to search 
 
--Might have to switch to winapp but there are some downsides. 
+-Fix onFail so it will actually close out of the top layer window and if there is a save screen hit save and exit
 
--Cancellation token source for when tests are stopped in the middle, remove drivers staying open or could just cycle through and get rid of them like intact.
+-Add annotations
 
--Exception, have to figure out if it isn't going to find the element on how to exit quickly, verify that test resets are working on all screens!!
+-Add utilities
+
+-Fix recognize so it will work completely, <-- Hard testing
 
 # Features Added 
 

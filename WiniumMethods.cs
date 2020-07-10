@@ -125,12 +125,8 @@ namespace WiniumTests {
             print(method, "DRIVER CLOSED");
         }
 
-        public void print(string method, string toPrint = "", Exception e = null) {
+        private void print(string method, string toPrint = "", Exception e = null) {
             debugLog.Info(method + " " + toPrint + " " + e);
         }
-        public void PrintError(string method, Exception e, string toPrint = "") {
-            debugLog.Info(method + " " + e + " " + toPrint);
-        }
-
     }
 }

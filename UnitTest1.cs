@@ -82,7 +82,7 @@ namespace WiniumTests {
         public void TEST6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
             user.loginToIntact();
-            user.closeWindow();
+            user.createDocument();
         }
         [TestMethod]
         public void TEST7_SEARCH() { //fix printings
@@ -96,11 +96,15 @@ namespace WiniumTests {
             user.loginToIntact();
             user.testRecognition("DEFAULT DEF" , "DEFAULT DEFINITION TEST", "DEFAULT DEFINITION TEST");
         }
-        public void print(string method, string toPrint) {
-            debugLog.Info(method + " " + toPrint);
+        [TestMethod]
+        public void TEST9_TEST() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.loginToIntact();
+            user.OpenUtil();
         }
-        public void printError(string method, string toPrint, Exception e) {
-            debugLog.Info(method + " " + e + " " + toPrint);
+
+        private void print(string method, string toPrint) {
+            debugLog.Info(method + " " + toPrint);
         }
     }
 }

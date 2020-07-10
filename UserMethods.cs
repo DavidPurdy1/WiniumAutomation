@@ -185,7 +185,7 @@ namespace WiniumTests {
                 if (isPDF) {
                     Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(driver.FindElementByName("Files of type:"));
                     filesOfType.SendKeys("p");
-                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("PDF" + rand.Next(6).ToString()).Build().Perform();
+                    action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("PDF0" ).Build().Perform();
                     m.Click(By.Id("1"));
                 } else {
                     action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys("n").KeyUp(OpenQA.Selenium.Keys.Alt).SendKeys("TIF" + rand.Next(6).ToString()).Build().Perform();
@@ -196,6 +196,9 @@ namespace WiniumTests {
                 //rotate
                 driver.FindElement(By.Id("lblType")).Click();
                 action.MoveByOffset(375, -37).Click().Click().Build().Perform();
+
+                //add annotations 
+                AddAnnotations();
 
                 //edit custom fields
                 print(method, "custom fields");
@@ -215,6 +218,16 @@ namespace WiniumTests {
                 m.Click(By.Id("btnClose"));
                 print(method, "Finished");
             }
+        }
+
+        private void AddAnnotations() {
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            m.Click(By.Id("lblType"));
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            action.MoveByOffset(500, -40).Click().Build().Perform();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+
+            action.MoveByOffset(0, 50).ClickAndHold().MoveByOffset(0, 50).Release().Build().Perform();
         }
         public bool search(string searchInput) {
             method = MethodBase.GetCurrentMethod().Name;
@@ -377,7 +390,6 @@ namespace WiniumTests {
                 print(method, "Starting or Ending path doesn't exist");
             }
         }
-
         public void addRecognition() {
             m.Click(By.Name("Recognize"));
             window = m.Locate(By.Id("frmMainInteractive"));
@@ -406,6 +418,22 @@ namespace WiniumTests {
             window = m.Locate(By.Id("txtFind"),window);
             m.SendKeys(By.Name(""), input, window);
         }
+        //untested
+        public void Logout() {
+            m.Click(By.Name("Lock"));
+            window = m.Locate(By.Name("Intact Client Locked"));
+            m.SendKeys(By.Name(""), "admin", window);
+            m.Click(By.Name("&Resume"),window);
+        }
+        //Not working, &Administration not being found correctly
+        public void OpenUtil() {
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            window = m.Locate(By.Name("radMenu1"));
+            m.Click(By.Name("&Administration"),window);
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            action.MoveByOffset(0, 400).Click().Build().Perform();
+            print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+        }
         /** This is going to take a screenshot each time it is called and save it
          * 
          * TODO: MAKE IT DELETE THE IMAGES EACH TIME THAT WAY YOU DON'T GET MORE AND MORE IMAGES ON THE DOC FROM OTHER FAILED TESTS. TRY DOING THIS IN IMAGETODOC.
@@ -417,10 +445,6 @@ namespace WiniumTests {
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
             closeWindow();
             return path;
-        }
-        public void closeWindow() {
-            action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
-            print(method, " window closed");
         }
         public void writeFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
             using (StreamWriter file =
@@ -475,17 +499,12 @@ namespace WiniumTests {
         public void closeDriver() {
             m.closeDriver();
         }
-        /** Have to add all scenarios where there is a new window open
-         * This is to close out and get back to the window for the next test.
-         */ 
-
-        /**For debug
-         */
+        public void closeWindow() {
+            action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
+            print(method, " window closed");
+        }
         private void print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
-        }
-        private void printError(string method, string toPrint, Exception e) {
-            debugLog.Info(method + " " + e + " " + toPrint);
         }
         private void printCursor() {
             print(method, "x: " + Cursor.Position.X.ToString() + " y: " + Cursor.Position.Y.ToString());
