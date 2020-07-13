@@ -1,7 +1,6 @@
 ﻿using log4net;
 using log4net.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -31,35 +30,35 @@ namespace WiniumTests {
         }
         [TestInitialize]
         public void TestInit() {
-            print(TestContext.TestName, "STARTED *********************************************");
+            Print(TestContext.TestName, "STARTED *********************************************");
         }
         [TestCleanup]
         public void TestCleanup() { 
             if (TestContext.CurrentTestOutcome == UnitTestOutcome.Passed) {
                 testsPassedNames.Add(TestContext.TestName);
-                print(method, "PASSED *****************************************");
+                Print(method, "PASSED *****************************************");
             } else {
-                string imagePath = user.onFail(TestContext.TestName); 
+                string imagePath = user.OnFail(TestContext.TestName); 
                 testsFailedNames.Add(TestContext.TestName + " " + imagePath + " | ");
-                print(method, "FAILED *****************************************");
+                Print(method, "FAILED *****************************************");
             }
         }
         [ClassCleanup]
         public static void Cleanup() { 
-            user.writeFailFile(testsFailedNames, testsPassedNames);
-            user.closeDriver(); 
+            user.WriteFailFile(testsFailedNames, testsPassedNames);
+            user.CloseDriver(); 
         }
 
 
         [TestMethod]
         public void TEST1_LOGIN() {               
             method = MethodBase.GetCurrentMethod().Name;  
-            user.loginToIntact();
+            user.LoginToIntact();
         }
         [TestMethod]
         public void TEST2_INZONE() {
             method = MethodBase.GetCurrentMethod().Name;
-            if (!user.getDocumentsFromInZone()) {
+            if (!user.GetDocumentsFromInZone()) {
                 throw new AssertFailedException(method + " InZone did not recognize the definition correctly");
             }
         }
@@ -71,39 +70,39 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST4_DEFINITIONS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.createNewDefinition();
+            user.CreateNewDefinition();
         }
         [TestMethod]
         public void TEST5_TYPES() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.createNewType();
+            user.CreateNewType();
         }
         [TestMethod]
         public void TEST6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.loginToIntact();
-            user.createDocument();
+            user.LoginToIntact();
+            user.CreateDocument(1,true);
         }
         [TestMethod]
         public void TEST7_SEARCH() { //fix printings
             method = MethodBase.GetCurrentMethod().Name;
-            user.loginToIntact();
-            Assert.IsTrue(user.search("InZone"), " Search not found" ); 
+            user.LoginToIntact();
+            Assert.IsTrue(user.Search("InZone"), " Search not found" ); 
         }
         [TestMethod]
         public void TEST8_RECOGNITION() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.loginToIntact();
-            user.testRecognition("DEFAULT DEF" , "DEFAULT DEFINITION TEST", "DEFAULT DEFINITION TEST");
+            user.LoginToIntact();
+            user.TestRecognition("DEFAULT DEF" , "DEFAULT DEFINITION TEST", "DEFAULT DEFINITION TEST");
         }
         [TestMethod]
         public void TEST9_TEST() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.loginToIntact();
+            user.LoginToIntact();
             user.OpenUtil();
         }
 
-        private void print(string method, string toPrint) {
+        private void Print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }
     }
