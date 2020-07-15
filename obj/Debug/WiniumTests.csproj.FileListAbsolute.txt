@@ -24,9 +24,6 @@ C:\Users\i00018\source\repos\WiniumTests\bin\Debug\Log4NetWinUI.exe.config
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\WiniumTests.dll.config
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\WebDriver.Support.dll
 C:\Users\i00018\source\repos\WiniumTests\bin\Debug\WebDriver.Support.xml
-C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
-C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
-C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\WiniumTests.dll.config
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\WiniumTests.dll
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\WiniumTests.pdb
@@ -46,3 +43,6 @@ C:\Users\i00018\source\repos\WiniumAutomation\obj\Debug\WiniumTests.csproj.CopyC
 C:\Users\i00018\source\repos\WiniumAutomation\obj\Debug\WiniumTests.dll
 C:\Users\i00018\source\repos\WiniumAutomation\obj\Debug\WiniumTests.pdb
 C:\Users\i00018\source\repos\WiniumAutomation\obj\Debug\WiniumTests.csprojAssemblyReference.cache
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll

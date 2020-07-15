@@ -14,20 +14,18 @@ using System.Windows.Forms;
 
 namespace WiniumTests {
     public class UserMethods {
-        Actions action;
         IWebElement window;
-        WiniumDriver driver;
         string method;
         readonly DesktopOptions options = new DesktopOptions();
+        readonly WiniumDriver driver;
         readonly WiniumMethods m;
-        readonly string driverPath;
         readonly ILog debugLog;
+        readonly Actions action;
 
         public UserMethods(ILog log) {
             debugLog = log;
             options.ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath");
-            driverPath = ConfigurationManager.AppSettings.Get("DriverPath");
-            driver = new WiniumDriver(driverPath, options);
+            driver = new WiniumDriver(ConfigurationManager.AppSettings.Get("DriverPath"), options);
             driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
             action = new Actions(driver);
             m = new WiniumMethods(driver, debugLog);
@@ -85,10 +83,10 @@ namespace WiniumTests {
         public void CreateNewDefinition(int? numberOfDefinitions = 1) {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
-            window = driver.FindElement(By.Id("frmIntactMain"));
-            window = window.FindElement(By.Name("radMenu1"));
+            window = m.Locate(By.Id("frmIntactMain"));
+            window = m.Locate(By.Name("radMenu1"),window);
             m.Click(By.Name("&Administration"), window);
-            window = window.FindElement(By.Name("&Administration"));
+            window = m.Locate(By.Name("&Administration"),window);
             m.Click(By.Name("Definitions"), window);
             for (int i = 0; i <= numberOfDefinitions; i++) {
                 var num = new Random().Next().ToString();
@@ -148,7 +146,7 @@ namespace WiniumTests {
         * docPath: allows you to specify the directory of docs, default is set in config
         * fileNumber: allows you to specify which file you want to use
         */
-        public void CreateDocument(int? numOfDocs = 1, bool isPDF = true, string docPath = "", int? fileNumber = 0 ) {
+        public void CreateDocument(int? numOfDocs = 1, bool isPDF = true, string docPath = "", int? fileNumber = 0) {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
             Thread.Sleep(2000);
@@ -183,11 +181,11 @@ namespace WiniumTests {
 
                 var rand = new Random();
                 if (isPDF) {
-                    Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(driver.FindElementByName("Files of type:"));
+                    Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(m.Locate(By.Name("Files of type:")));
                     filesOfType.SendKeys("p");
                     filesOfType.SendKeys(OpenQA.Selenium.Keys.Enter);
                     Thread.Sleep(500);
-                    if(fileNumber == 0) {
+                    if (fileNumber == 0) {
                         action.MoveToElement(m.Locate(By.Id(rand.Next(Directory.GetFiles(docPath, "*.pdf").Length).ToString()))).DoubleClick().Build().Perform();
                     } else {
                         action.MoveToElement(m.Locate(By.Id(fileNumber.ToString()))).DoubleClick().Build().Perform();
@@ -204,7 +202,7 @@ namespace WiniumTests {
                 Thread.Sleep(3000);
 
                 //rotate
-                //driver.FindElement(By.Id("lblType")).Click();
+                //m.Click(By.Id("lblType"));
                 //action.MoveByOffset(375, -37).Click().Click().Build().Perform();
 
                 //add annotations: UNABLE TO DO THIS WITHOUT DRAG AND DROP. NOT IMPLEMENTED EXCEPTION
@@ -212,13 +210,13 @@ namespace WiniumTests {
 
                 //edit custom fields
                 Print(method, "custom fields");
-                driver.FindElement(By.Id("lblType")).Click();
+                m.Click(By.Id("lblType"));
                 action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
                     MoveByOffset(0, 20).Click().SendKeys("7").MoveByOffset(0, 20).Click().SendKeys("string").Build().Perform();
 
                 //edit fields
                 Print(method, "edit fields ");
-                driver.FindElement(By.Id("lblType")).Click();
+                m.Click(By.Id("lblType"));
                 action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("AUTHOR TEST").
                     MoveByOffset(0, 40).Click().SendKeys("SUMMARY TEST").Build().Perform();
 
@@ -252,11 +250,13 @@ namespace WiniumTests {
             m.Click(By.Name("Search"), window);
 
             Thread.Sleep(1000);
+
             if (m.IsElementPresent(By.Name("Quick Search"))) {
                 m.Click(By.Name("OK"));
                 Print(method, "Result not found");
                 return false;
-            }else if (m.IsElementPresent(By.Id("frmBatchActionMain"))) {
+            }
+            if (m.IsElementPresent(By.Id("frmBatchActionMain"))) {
                 Print(method, " Result found");
                 return true;
             } else {
@@ -318,13 +318,13 @@ namespace WiniumTests {
 
             //custom fields
             Print(method, "custom fields");
-            driver.FindElement(By.Id("lblType")).Click();
+            m.Click(By.Id("lblType"));
             action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
                 MoveByOffset(0, 20).Click().SendKeys("10").MoveByOffset(0, 20).Click().SendKeys("BATCH REVIEW ADD").Build().Perform();
 
             //edit fields
             Print(method, "edit fields ");
-            driver.FindElement(By.Id("lblType")).Click();
+            m.Click(By.Id("lblType"));
             action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH AUTHOR TEST").
                 MoveByOffset(0, 40).Click().SendKeys("BATCH ADDING TO ANOTHER DOCUMENT TEST").Build().Perform();
 
@@ -346,13 +346,13 @@ namespace WiniumTests {
 
             //custom fields
             Print(method, "custom fields");
-            driver.FindElement(By.Id("lblType")).Click();
+            m.Click(By.Id("lblType"));
             action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
                 MoveByOffset(0, 20).Click().SendKeys("10").MoveByOffset(0, 20).Click().SendKeys("BATCH REVIEW ATTRIBUTION").Build().Perform();
-            
+
             //edit fields
             Print(method, "edit fields ");
-            driver.FindElement(By.Id("lblType")).Click();
+            m.Click(By.Id("lblType"));
             action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH AUTHOR TEST").
                 MoveByOffset(0, 40).Click().SendKeys("BATCH ATTRIBUTING A DOCUMENT TEST").Build().Perform();
 
@@ -407,8 +407,8 @@ namespace WiniumTests {
         public void AddRecognition() {
             m.Click(By.Name("Recognize"));
             window = m.Locate(By.Id("frmMainInteractive"));
-            window = m.Locate(By.Id("btnSelect"),window);
-            m.Click(By.Name("Select All"),window);
+            window = m.Locate(By.Id("btnSelect"), window);
+            m.Click(By.Name("Select All"), window);
             m.Click(By.Id("btnRecgonize"));
             m.Click(By.Id("btnClose"));
         }
@@ -433,7 +433,7 @@ namespace WiniumTests {
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
             window = m.Locate(By.Name("Find"));
-            window = m.Locate(By.Id("txtFind"),window);
+            window = m.Locate(By.Id("txtFind"), window);
             m.SendKeys(By.Name(""), input, window);
         }
         /** UNTESTED
@@ -443,27 +443,72 @@ namespace WiniumTests {
             m.Click(By.Name("Lock"));
             window = m.Locate(By.Name("Intact Client Locked"));
             m.SendKeys(By.Name(""), "admin", window);
-            m.Click(By.Name("&Resume"),window);
+            m.Click(By.Name("&Resume"), window);
         }
-        //Not working, &Administration not being found correctly
+        //NOT FINISHED
         public void OpenUtil() {
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            window = m.Locate(By.Name("radMenu1"));
-            m.Click(By.Name("&Administration"),window);
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            action.MoveByOffset(0, 400).Click().Build().Perform();
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            //Document indexing
+            window = m.Locate(By.Name("&Administration"));
+            window = m.Locate(By.Name("Utilities"), window);
+            m.Click(By.Name("Index Documents..."), window);
+            window = m.Locate(By.Id("frmDocumentIndexing"));
+            m.Click(By.Id("btnFull"), window);
+            m.Click(By.Id("btnClose"), window);
+
+            //TODO:Fix expired documents another table
+            window = m.Locate(By.Name("&Administration"));
+            window = m.Locate(By.Name("Utilities"), window);
+            m.Click(By.Name("View Expired Documents..."), window);
+            m.Click(By.Id("Close"));
+
+            //View licenses
+            //window = m.Locate(By.Name("&Administration"));
+            //window = m.Locate(By.Name("Utilities"), window);
+            //m.Click(By.Name("View Licenses..."), window);
+            //m.Click(By.Name("Close"));
+
+            //Change Background image
+            window = m.Locate(By.Name("&Administration"));
+            window = m.Locate(By.Name("Utilities"), window);
+            m.Click(By.Name("Change Background Image..."), window);
+            m.Click(By.Name("OK"));
+
+            //Batch Recognize skip for now because of recognize test...
+
+            //Settings Console
+            window = m.Locate(By.Name("&Administration"));
+            window = m.Locate(By.Name("Utilities"), window);
+            m.Click(By.Name("Settings Console..."), window);
+            m.Click(By.Id("&OK"));
+
+            //Diagnostics Console
+            window = m.Locate(By.Name("&Administration"));
+            window = m.Locate(By.Name("Utilities"), window);
+            m.Click(By.Name("Diagnostics Utility..."), window);
+            m.Click(By.Id("Close"));
+
+            //Refile Documents
+            window = m.Locate(By.Name("&Administration"));
+            window = m.Locate(By.Name("Utilities"), window);
+            m.Click(By.Name("Refile Documents..."), window);
+            m.Click(By.Id("Close"));
+
+            //View Recognize Errors 
+            window = m.Locate(By.Name("&Administration"));
+            window = m.Locate(By.Name("Utilities"), window);
+            m.Click(By.Name("View Recognize Errors..."), window);
+            m.Click(By.Id("Close"));
         }
         /** 
          * Found in test cleanup
          * saves screenshot in the directory specified, closes top window, returns path for the fail file
          */
         public string OnFail(string testName, string folderPath = "") {
-            if(folderPath.Length < 2) {
+            if (folderPath.Length < 2) {
                 folderPath = ConfigurationManager.AppSettings.Get("AutomationScreenshots");
             }
-            string path = Path.Combine(folderPath, testName +"_" + DateTime.Now.Month.ToString() +"-" + DateTime.Now.Day.ToString() +"-" + DateTime.Now.Year.ToString() +
-                "_" + DateTime.Now.Hour.ToString() +"-" + DateTime.Now.Minute.ToString()+"-" + DateTime.Now.Second.ToString());
+            string path = Path.Combine(folderPath, testName + "_" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString() + "-" + DateTime.Now.Year.ToString() +
+                "_" + DateTime.Now.Hour.ToString() + "-" + DateTime.Now.Minute.ToString() + "-" + DateTime.Now.Second.ToString());
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
             CloseWindow();
             return path;
@@ -525,16 +570,11 @@ namespace WiniumTests {
             m.CloseDriver();
         }
         public void CloseWindow() {
-            //action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
-
-            driver.Close();
+            action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
             Print(method, " window closed");
         }
         private void Print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
-        }
-        private void PrintCursor() {
-            Print(method, "x: " + Cursor.Position.X.ToString() + " y: " + Cursor.Position.Y.ToString());
         }
     }
 }
