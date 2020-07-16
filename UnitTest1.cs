@@ -53,14 +53,14 @@ namespace WiniumTests {
         }
         #endregion 
 
-        #region 
+        #region
         [TestMethod]
         public void TEST1_LOGIN() {
             method = MethodBase.GetCurrentMethod().Name;
             user.LoginToIntact();
         }
         [TestMethod]
-        public void TEST2_INZONE() {
+        public void TEST2_INZONE() { //change it so that it throws error in usermethod
             method = MethodBase.GetCurrentMethod().Name;
             if (!user.GetDocumentsFromInZone()) {
                 throw new AssertFailedException(method + " InZone did not recognize the definition correctly");
@@ -74,33 +74,32 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST4_DEFINITIONS() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.LoginToIntact();
             user.CreateNewDefinition();
         }
         [TestMethod]
         public void TEST5_TYPES() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.LoginToIntact();
             user.CreateNewType();
         }
         [TestMethod]
         public void TEST6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
             user.CreateDocument(1, true);
         }
         [TestMethod]
         public void TEST7_SEARCH() { //fix printings
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
-            Assert.IsTrue(user.Search("InZone"), " Search not found");
+            user.Search("water");
         }
         [TestMethod]
         public void TEST8_RECOGNITION() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
-            user.TestRecognition("DEFAULT DEF", "DEFAULT DEFINITION TEST", "DEFAULT DEFINITION TEST");
+            user.TestRecognition("DEFAULT DOCUMENT OPTIONS", "DEFAULT DOCUMENT", "lorem");
         }
         [TestMethod]
-        public void TEST9_TEST() {
+        public void TEST9_UTIL() {
             method = MethodBase.GetCurrentMethod().Name;
             user.LoginToIntact();
             user.OpenUtil();

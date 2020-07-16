@@ -14,6 +14,7 @@ using System.Windows.Forms;
 
 namespace WiniumTests {
     public class UserMethods {
+        #region 
         IWebElement window;
         string method;
         readonly DesktopOptions options = new DesktopOptions();
@@ -21,7 +22,9 @@ namespace WiniumTests {
         readonly WiniumMethods m;
         readonly ILog debugLog;
         readonly Actions action;
+        #endregion
 
+        #region
         public UserMethods(ILog log) {
             debugLog = log;
             options.ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath");
@@ -30,7 +33,6 @@ namespace WiniumTests {
             action = new Actions(driver);
             m = new WiniumMethods(driver, debugLog);
         }
-
         /**Doesn't work
          * This is going to connect to a remote server with the name brought in by serverName, when used
          * Doesn't work with the changes that have been made, lots of these are readonly
@@ -66,7 +68,6 @@ namespace WiniumTests {
             Thread.Sleep(2000);
             Print(method, " Finished");
         }
-        //UNTESTED
         private void setDatabaseInformation() {
             method = MethodBase.GetCurrentMethod().Name;
             debugLog.Info(method + " Started");
@@ -78,6 +79,11 @@ namespace WiniumTests {
 
             debugLog.Info(method + " Finished");
         }
+        #endregion
+
+        #region
+        //TO TEST THIS MAKE SURE THAT INTACT IS IN FULL SCREEN, FIX
+
         /**This is going to a specified amount of definitions with random name for each blank.
          */
         public void CreateNewDefinition(int? numberOfDefinitions = 1) {
@@ -242,7 +248,9 @@ namespace WiniumTests {
         /** Searches intact for a keyword, if not found fails the test
          *  searchInput: string put in searchBar
          */
-        public bool Search(string searchInput) {
+        #endregion
+
+        public void Search(string searchInput) {
             method = MethodBase.GetCurrentMethod().Name;
             window = m.Locate(By.Id("frmIntactMain"));
             window = m.Locate(By.Name("radMenu1"), window);
@@ -250,18 +258,12 @@ namespace WiniumTests {
             m.Click(By.Name("Search"), window);
 
             Thread.Sleep(1000);
-
-            if (m.IsElementPresent(By.Name("Quick Search"))) {
+            if(m.IsElementPresent(By.Name("Quick Search"))) {
                 m.Click(By.Name("OK"));
                 Print(method, "Result not found");
-                return false;
-            }
-            if (m.IsElementPresent(By.Id("frmBatchActionMain"))) {
-                Print(method, " Result found");
-                return true;
+                throw new AssertFailedException(method + ": Result Not Found");
             } else {
-                Print(method, " Error in search");
-                throw new AssertFailedException(method + " Error in search");
+                Print(method, "Result Found");
             }
         }
         public void OpenOrganizer() {
@@ -372,8 +374,8 @@ namespace WiniumTests {
             m.Click(By.Name("InZone"), window);
             Thread.Sleep(2000);
             window = m.Locate(By.Id("frmInZoneMain"));
-            m.Click(By.Id("btnCollectSc"), window);
-            Thread.Sleep(9000);
+            m.Click(By.Id("btnCollectScan"), window);
+            Thread.Sleep(10000);
             bool hasPassed = false;
 
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
@@ -394,6 +396,7 @@ namespace WiniumTests {
          * Verify that the startPath always has files in it and those files shouldn't be removed from this folder when collected.
          */
         private void AddDocsToCollector() {
+            method = MethodBase.GetCurrentMethod().Name;
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
             string endPath = ConfigurationManager.AppSettings.Get("InZoneCollectorPath");
             if (Directory.Exists(startPath) & Directory.Exists(endPath)) {
@@ -407,6 +410,7 @@ namespace WiniumTests {
         public void AddRecognition() {
             m.Click(By.Name("Recognize"));
             window = m.Locate(By.Id("frmMainInteractive"));
+            Thread.Sleep(1500);
             window = m.Locate(By.Id("btnSelect"), window);
             m.Click(By.Name("Select All"), window);
             m.Click(By.Id("btnRecgonize"));
@@ -418,7 +422,7 @@ namespace WiniumTests {
          * input: string to search to see if the page recognizes it
          */
         public void TestRecognition(string definitionName, string documentName, string input) { // test to make sure there are documents in recognize
-            //createDocument();
+            CreateDocument();
             AddRecognition();
             OpenOrganizer();
             m.Click(By.Name(definitionName));
@@ -433,8 +437,14 @@ namespace WiniumTests {
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
             window = m.Locate(By.Name("Find"));
-            window = m.Locate(By.Id("txtFind"), window);
-            m.SendKeys(By.Name(""), input, window);
+            m.SendKeys(By.Name(""), input, m.Locate(By.Id("txtFind"), window));
+            m.Click(By.Id("btnFind"));
+
+            if(m.IsElementPresent(By.Name("Search Text Not Found"), window)) {
+                throw new AssertFailedException("Search Text not found for Recognize");
+            }
+            m.Click(By.Id("btnCancel"));
+            m.Click(By.Id("btnClose"));
         }
         /** UNTESTED
          * logouts and in of intact
@@ -471,7 +481,9 @@ namespace WiniumTests {
             window = m.Locate(By.Name("&Administration"));
             window = m.Locate(By.Name("Utilities"), window);
             m.Click(By.Name("Change Background Image..."), window);
-            m.Click(By.Name("OK"));
+            Thread.Sleep(1500);
+            window = m.Locate(By.Name("Select Client Background Image"), m.Locate(By.Id("frmIntactMain")));
+            m.Click(By.Id("btnOK"), window);
 
             //Batch Recognize skip for now because of recognize test...
 
@@ -480,6 +492,7 @@ namespace WiniumTests {
             window = m.Locate(By.Name("Utilities"), window);
             m.Click(By.Name("Settings Console..."), window);
             m.Click(By.Id("&OK"));
+            m.Click(By.Id("Close"));
 
             //Diagnostics Console
             window = m.Locate(By.Name("&Administration"));
@@ -499,6 +512,8 @@ namespace WiniumTests {
             m.Click(By.Name("View Recognize Errors..."), window);
             m.Click(By.Id("Close"));
         }
+
+        #region 
         /** 
          * Found in test cleanup
          * saves screenshot in the directory specified, closes top window, returns path for the fail file
@@ -517,6 +532,8 @@ namespace WiniumTests {
          * Writes tests passed and failed in a file that can be set in config, appends to file and give the path to the screenshot
          */
         public void WriteFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
+            method = MethodBase.GetCurrentMethod().Name;
+            Print(method, "Started");
             using (StreamWriter file =
             new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile"), true)) {
                 file.WriteLine(DateTime.Now.ToString() + "| " + testsFailedNames.Count.ToString() + " Tests failed | " + testsPassedNames.Count.ToString() + " Tests passed |");
@@ -566,13 +583,26 @@ namespace WiniumTests {
             //wordDoc.SaveAs2(ConfigurationManager.AppSettings.Get("TestFailedDocs"));
             //word.Quit();
         }
+        #endregion
+
+        #region
         public void CloseDriver() {
-            m.CloseDriver();
+            driver.Quit();
+            Print(method, "DRIVER CLOSED");
         }
         public void CloseWindow() {
-            action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
+            if (m.IsElementPresent(By.Id("btnClose"))) {
+                m.Click(By.Id("btnClose"));
+            }
+            else if (m.IsElementPresent(By.Id("Close"))) {
+                m.Click(By.Id("Close"));
+            } else {
+                action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
+            }
             Print(method, " window closed");
         }
+        #endregion
+
         private void Print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }

@@ -26,8 +26,8 @@ namespace WiniumTests {
                     return element;
                 }
             } catch (NoSuchElementException e) {
-                Print(method, " Failed on " + method + "Finding element" + by.ToString() + e.Source);
-                throw new AssertFailedException("Failed on " + method + "Finding element" + by.ToString());
+                Print(method, " Failed on " + method + " Finding element" + by.ToString() + e.Source);
+                throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
             }
             Print(method, "Was not NoSuchElement");
             throw new AssertFailedException(method + " Was not NoSuchElement");
@@ -120,9 +120,8 @@ namespace WiniumTests {
         public bool IsElementPresent(By by) {
             return driver.FindElements(by).Count > 0;
         }
-        public void CloseDriver() {
-            driver.Quit();
-            Print(method, "DRIVER CLOSED");
+        public bool IsElementPresent(By by, IWebElement parent) {
+            return parent.FindElements(by).Count > 0;
         }
         private void Print(string method, string toPrint = "", Exception e = null) {
             debugLog.Info(method + " " + toPrint + " " + e);
