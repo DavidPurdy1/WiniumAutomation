@@ -104,6 +104,16 @@ namespace WiniumTests {
             user.LoginToIntact();
             user.OpenUtil();
         }
+        [TestMethod]
+        public void TEST10_IPACK() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.AddToIPack();
+        }
+        [TestMethod]
+        public void TEST11_LOGOUT() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.Logout();
+        }
         #endregion
 
         private void Print(string method, string toPrint) {

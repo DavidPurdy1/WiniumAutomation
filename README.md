@@ -21,6 +21,8 @@
 
 -In final console app implement something to be able to clear out the specified folders/archive it.
 
+-Figure out what else I need to add
+
 # Features Added 
 
 -Creation of Types and definitions and documents

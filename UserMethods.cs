@@ -68,6 +68,10 @@ namespace WiniumTests {
             Thread.Sleep(2000);
             Print(method, " Finished");
         }
+        public void Logout() {
+            window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1")));
+            m.Click(By.Name("Log Out"), window);
+        }
         private void setDatabaseInformation() {
             method = MethodBase.GetCurrentMethod().Name;
             debugLog.Info(method + " Started");
@@ -86,59 +90,64 @@ namespace WiniumTests {
 
         /**This is going to a specified amount of definitions with random name for each blank.
          */
-        public void CreateNewDefinition(int? numberOfDefinitions = 1) {
+        public void CreateNewDefinition(int? numberOfDefinitions = 1, string definitionName = "") {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
+
             window = m.Locate(By.Id("frmIntactMain"));
             window = m.Locate(By.Name("radMenu1"),window);
             m.Click(By.Name("&Administration"), window);
             window = m.Locate(By.Name("&Administration"),window);
             m.Click(By.Name("Definitions"), window);
+
+            if(definitionName.Length < 2) {
+                definitionName = "Test";
+            }
+
             for (int i = 0; i <= numberOfDefinitions; i++) {
                 var num = new Random().Next().ToString();
-                window = m.Locate(By.Id("frmIntactMain"));
-                window = m.Locate(By.Id("frmRulesList"));
-                m.Click(By.Id("btnAdd"));
+                window = m.Locate(By.Id("frmRulesList"), m.Locate(By.Id("frmIntactMain")));
+                m.Click(By.Id("btnAdd"), window);
                 window = m.Locate(By.Name("Add Definition"));
-                Print(method, "Definition name is " + "Test " + num);
+                Print(method, "Definition name is " + definitionName + num);
                 foreach (IWebElement element in window.FindElements(By.Name(""))) {
                     if (element.Enabled == true) {
-                        try { element.SendKeys("Test " + num); } catch (Exception) { }
+                        try { element.SendKeys(definitionName+ " " + num); } catch (Exception) { }
                     }
                 }
                 m.Click(By.Name("&Save"), window);
+
             }
+
             m.Click(By.Name("&Close"));
             Print(method, "Finished");
         }
         /**Going to create a new type and will add random values for all of blanks.
          * numberOfTypes: specify how many you want to add
          */
-        public void CreateNewType(int? numberOfTypes = 1) {
+        public void CreateNewType(int? numberOfTypes = 1, string typeName = "") {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
 
-            window = m.Locate(By.Id("frmIntactMain"));
-
-            window = m.Locate(By.Name("radMenu1"));
+            window = m.Locate(By.Name("radMenu1"), m.Locate(By.Id("frmIntactMain")));
             m.Click(By.Name("&Administration"), window);
 
-            window = m.Locate(By.Name("&Administration"));
-            m.Click(By.Name("Types"), window);
+            m.Click(By.Name("Types"), m.Locate(By.Name("&Administration")));
 
+            if(typeName.Length < 2) {
+                typeName = "Test";
+            }
             for (int i = 0; i < numberOfTypes; i++) {
                 var temp = new Random().Next().ToString();
-                window = m.Locate(By.Id("frmIntactMain"));
 
-                window = m.Locate(By.Id("frmAdminTypes"));
+                window = m.Locate(By.Id("frmAdminTypes"), m.Locate(By.Id("frmIntactMain")));
 
                 m.Click(By.Id("rbtnAdd"), window);
-
                 window = m.Locate(By.Id("frmAdminTypesInfo"));
 
                 foreach (IWebElement element in window.FindElements(By.Name(""))) {
                     if (element.Enabled == true) {
-                        try { element.SendKeys("Test " + temp); } catch (Exception) { }
+                        try { element.SendKeys(typeName + temp); } catch (Exception) { }
                     }
                 }
                 m.Click(By.Name("&OK"));
@@ -407,7 +416,7 @@ namespace WiniumTests {
                 Print(method, "Starting or Ending path doesn't exist");
             }
         }
-        public void AddRecognition() {
+        private void AddRecognition() {
             m.Click(By.Name("Recognize"));
             window = m.Locate(By.Id("frmMainInteractive"));
             Thread.Sleep(1500);
@@ -445,15 +454,6 @@ namespace WiniumTests {
             }
             m.Click(By.Id("btnCancel"));
             m.Click(By.Id("btnClose"));
-        }
-        /** UNTESTED
-         * logouts and in of intact
-         */
-        public void Logout() {
-            m.Click(By.Name("Lock"));
-            window = m.Locate(By.Name("Intact Client Locked"));
-            m.SendKeys(By.Name(""), "admin", window);
-            m.Click(By.Name("&Resume"), window);
         }
         //NOT FINISHED
         public void OpenUtil() {
@@ -511,6 +511,21 @@ namespace WiniumTests {
             window = m.Locate(By.Name("Utilities"), window);
             m.Click(By.Name("View Recognize Errors..."), window);
             m.Click(By.Id("Close"));
+        }
+
+        public void AddToIPack() {
+            window = m.Locate(By.Id("pageIntact"), m.Locate(By.Name("radPanelBar1")));
+            window = m.Locate(By.Id("lstIntact"), window);
+            m.Click(By.Name("iPack"), window);
+            m.Click(By.Id("rbnBatch"));
+            Thread.Sleep(1000);
+            if(m.IsElementPresent(By.Name("No documents were selected"))) {
+                m.Click(By.Name("OK"));
+            }
+            Thread.Sleep(1000);
+
+            m.Click(By.Id("radButton1")); 
+            Thread.Sleep(5000);
         }
 
         #region 
