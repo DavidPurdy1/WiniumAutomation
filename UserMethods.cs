@@ -58,7 +58,7 @@ namespace WiniumTests {
             bool needToSetDB = ConfigurationManager.AppSettings.Get("setDataBase") == "true"; ;
             bool connectToRemote = ConfigurationManager.AppSettings.Get("connectToRemote") == "true";
             Thread.Sleep(10000);
-            m.SendKeys(By.Name(""), "admin");
+            m.SendKeys(By.Name(""), "admin", m.Locate(By.Id("frmLogin")));
             if (!needToSetDB) {
                 m.Click(By.Name("&Logon"));
             } else {
@@ -116,7 +116,6 @@ namespace WiniumTests {
                     }
                 }
                 m.Click(By.Name("&Save"), window);
-
             }
 
             m.Click(By.Name("&Close"));
@@ -268,7 +267,7 @@ namespace WiniumTests {
 
             Thread.Sleep(1000);
             if(m.IsElementPresent(By.Name("Quick Search"))) {
-                m.Click(By.Name("OK"));
+                //m.Click(By.Name("OK"));
                 Print(method, "Result not found");
                 throw new AssertFailedException(method + ": Result Not Found");
             } else {
@@ -324,7 +323,7 @@ namespace WiniumTests {
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             m.Click(By.Id("lblType"));
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            action.MoveByOffset(375, -37).Click().Click().Click().Click().Click().Build().Perform();
+            action.MoveByOffset(395, -37).Click().Click().Click().Click().Click().Build().Perform();
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
 
             //custom fields
@@ -514,8 +513,7 @@ namespace WiniumTests {
         }
 
         public void AddToIPack() {
-            window = m.Locate(By.Id("pageIntact"), m.Locate(By.Name("radPanelBar1")));
-            window = m.Locate(By.Id("lstIntact"), window);
+            window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1"))); 
             m.Click(By.Name("iPack"), window);
             m.Click(By.Id("rbnBatch"));
             Thread.Sleep(1000);
@@ -526,6 +524,17 @@ namespace WiniumTests {
 
             m.Click(By.Id("radButton1")); 
             Thread.Sleep(5000);
+        }
+
+        public void AddToPortfolio() {
+            window = m.Locate(By.Name("&Administration"), m.Locate(By.Name("radMenu1")));
+            m.Click(By.Name("Portfolios"), window);
+            window = m.Locate(By.Id("frmPortfolioMain"));
+            m.Click(By.Id("btnGenerate"), window);
+            //.....
+
+            m.Click(By.Id("btnClose"));
+            m.Click(By.Id("btnClose"));
         }
 
         #region 
@@ -540,7 +549,7 @@ namespace WiniumTests {
             string path = Path.Combine(folderPath, testName + "_" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString() + "-" + DateTime.Now.Year.ToString() +
                 "_" + DateTime.Now.Hour.ToString() + "-" + DateTime.Now.Minute.ToString() + "-" + DateTime.Now.Second.ToString());
             ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
-            CloseWindow();
+                CloseWindow();
             return path;
         }
         /** 
@@ -558,6 +567,7 @@ namespace WiniumTests {
                 foreach (string name in testsPassedNames) {
                     file.WriteLine(name + " passed");
                 }
+                file.WriteLine(" ");
                 file.WriteLine(" ");
             }
         }

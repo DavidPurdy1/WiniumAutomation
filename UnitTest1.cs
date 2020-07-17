@@ -29,7 +29,7 @@ namespace WiniumTests {
             user = new UserMethods(debugLog);
             XmlConfigurator.Configure();
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetCompatibleTextRenderingDefault(false); 
         }
         [TestInitialize]
         public void TestInit() {
@@ -74,13 +74,11 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST4_DEFINITIONS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
             user.CreateNewDefinition();
         }
         [TestMethod]
         public void TEST5_TYPES() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
             user.CreateNewType();
         }
         [TestMethod]
@@ -107,12 +105,19 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST10_IPACK() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.LoginToIntact();
             user.AddToIPack();
         }
         [TestMethod]
         public void TEST11_LOGOUT() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Logout();
+        }
+        [TestMethod]
+        public void TEST12_PORTFOLIOS() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.LoginToIntact();
+            user.AddToPortfolio();
         }
         #endregion
 

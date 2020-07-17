@@ -11,46 +11,37 @@ namespace WiniumTests {
         string method;
         readonly WiniumDriver driver;
         readonly ILog debugLog;
-
+        
         public WiniumMethods(WiniumDriver driver, ILog log) {
             this.driver = driver;
             debugLog = log;
         }
 
+        #region
         public IWebElement Locate(By by) {
+            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(0.5));
             method = MethodBase.GetCurrentMethod().Name;
-            try {
-                IWebElement element = driver.FindElement(by);
-                Print(method, by.ToString() + " Has been Located");
-                if (element != null) {
-                    return element;
+                if (IsElementPresent(by)) {
+                    Print(method, by.ToString() + " Has been Located");
+                    return driver.FindElement(by);
+                } else {
+                    throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
                 }
-            } catch (NoSuchElementException e) {
-                Print(method, " Failed on " + method + " Finding element" + by.ToString() + e.Source);
-                throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
-            }
-            Print(method, "Was not NoSuchElement");
-            throw new AssertFailedException(method + " Was not NoSuchElement");
         }
         public IWebElement Locate(By by, IWebElement parent) {
             method = MethodBase.GetCurrentMethod().Name;
-            try {
-                IWebElement element = parent.FindElement(by);
+            if (IsElementPresent(by, parent)) {
                 Print(method, by.ToString() + " Has been Located");
-                if (element != null) {
-                    return element;
-                }
-            } catch (NoSuchElementException e) {
-                Print(method, " Failed on " + method + " Finding element" + by.ToString() + e.Source);
+                return parent.FindElement(by);
+            } else {
                 throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
             }
-            Print(method, "Was not NoSuchElement");
-            throw new AssertFailedException(method + " Was not NoSuchElement");
         }
         public void Click(By by) {
             method = MethodBase.GetCurrentMethod().Name;
             try {
                 var element = Locate(by);
+                Print(method, "Located");
                 if (element.Enabled) {
                     element.Click();
                     Print(method, by.ToString() + " Clicked");
@@ -67,6 +58,7 @@ namespace WiniumTests {
             method = MethodBase.GetCurrentMethod().Name;
             try {
                 var element = Locate(by, parent);
+                Print(method, "Located");
                 if (element.Enabled) {
                     element.Click();
                     Print(method, by.ToString() + " Clicked");
@@ -82,7 +74,9 @@ namespace WiniumTests {
         public void SendKeys(By by, string input) {
             method = MethodBase.GetCurrentMethod().Name;
             try {
+
                 var element = Locate(by);
+                Print(method, "Located");
                 if (element.Enabled) {
                     element.SendKeys(input);
                     Print(method, by.ToString() + " sent " + input);
@@ -102,6 +96,7 @@ namespace WiniumTests {
             method = MethodBase.GetCurrentMethod().Name;
             try {
                 var element = Locate(by, parent);
+                Print(method, "Located");
                 if (element.Enabled) {
                     element.SendKeys(input);
                     Print(method, by.ToString() + " sent " + input);
@@ -123,6 +118,8 @@ namespace WiniumTests {
         public bool IsElementPresent(By by, IWebElement parent) {
             return parent.FindElements(by).Count > 0;
         }
+        #endregion
+
         private void Print(string method, string toPrint = "", Exception e = null) {
             debugLog.Info(method + " " + toPrint + " " + e);
         }

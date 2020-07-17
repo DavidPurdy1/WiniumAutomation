@@ -7,21 +7,23 @@
 
 -When more than a couple tests fail, most likely it is going to be a problem with the program, maybe implement removing the first test that failed if array of test is larger than a certain amount. Could be done by creating a playlist and then deciding what playlist to run/uninclude test somehow.
 
--generate portfolios and that type of stuff
-
 -On each screen go through and add interaction with each button and blank to see if it throws an error or messes something up
 
 -Fix onFail so it will actually close out of the top layer window and if there is a save screen hit save and exit. verify that test resets are working on all screens!! <-- Hard
 
--Add annotations (Unimplemented Exeception) <-- Hard
+-Add annotations (Unimplemented Exeception)
 
--Add utilities support ( only some need help ) 
+-Add full utilities support
 
 -In the fail file specify where the thing fails
 
 -In final console app implement something to be able to clear out the specified folders/archive it.
 
 -Figure out what else I need to add
+
+-Look at storing elements in a dictionary, the getting them and using them. 
+
+-Maybe look at locate because pretty common for it to fail so probably not an exception. Needs to run faster, when throwing an exception
 
 # Features Added 
 
