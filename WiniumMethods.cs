@@ -22,30 +22,22 @@ namespace WiniumTests {
             try {
                 IWebElement element = driver.FindElement(by);
                 Print(method, by.ToString() + " Has been Located");
-                if (element != null) {
-                    return element;
-                }
+                return element;
             } catch (NoSuchElementException e) {
                 Print(method, " Failed on " + method + " Finding element" + by.ToString() + e.Source);
                 throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
             }
-            Print(method, "Was not NoSuchElement");
-            throw new AssertFailedException(method + " Was not NoSuchElement");
         }
         public IWebElement Locate(By by, IWebElement parent) {
             method = MethodBase.GetCurrentMethod().Name;
             try {
                 IWebElement element = parent.FindElement(by);
                 Print(method, by.ToString() + " Has been Located");
-                if (element != null) {
-                    return element;
-                }
+                return element;
             } catch (NoSuchElementException e) {
                 Print(method, " Failed on " + method + " Finding element" + by.ToString() + e.Source);
                 throw new AssertFailedException("Failed on " + method + " Finding element" + by.ToString());
             }
-            Print(method, "Was not NoSuchElement");
-            throw new AssertFailedException(method + " Was not NoSuchElement");
         }
         public void Click(By by) {
             method = MethodBase.GetCurrentMethod().Name;
