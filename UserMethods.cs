@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Winium;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,13 @@ namespace WiniumTests {
         #region 
         IWebElement window;
         string method;
+        string intactMainHandle; 
         readonly DesktopOptions options = new DesktopOptions();
         readonly WiniumDriver driver;
         readonly WiniumMethods m;
         readonly ILog debugLog;
         readonly Actions action;
+        List<string> windowsOpen = new List<string>();
         #endregion
 
         #region
@@ -66,6 +69,9 @@ namespace WiniumTests {
                 m.Click(By.Name("&Logon"));
             }
             Thread.Sleep(2000);
+            
+            intactMainHandle = driver.CurrentWindowHandle;
+            windowsOpen.Add(intactMainHandle);
             Print(method, " Finished");
         }
         public void Logout() {
@@ -258,7 +264,7 @@ namespace WiniumTests {
          *  searchInput: string put in searchBar
          */
         #endregion
-
+        
         public void Search(string searchInput) {
             method = MethodBase.GetCurrentMethod().Name;
             window = m.Locate(By.Id("frmIntactMain"));
@@ -268,7 +274,6 @@ namespace WiniumTests {
 
             Thread.Sleep(1000);
             if(m.IsElementPresent(By.Name("Quick Search"))) {
-                m.Click(By.Name("OK"));
                 Print(method, "Result not found");
                 throw new AssertFailedException(method + ": Result Not Found");
             } else {
@@ -425,7 +430,7 @@ namespace WiniumTests {
             m.Click(By.Id("btnRecgonize"));
             m.Click(By.Id("btnClose"));
         }
-        /**UNTESTED
+        /**
          * definitionName: definition of what you want to recognize
          * documentName: document name
          * input: string to search to see if the page recognizes it
@@ -526,8 +531,9 @@ namespace WiniumTests {
 
             m.Click(By.Id("radButton1")); 
             Thread.Sleep(5000);
+            
         }
-
+        
         #region 
         /** 
          * Found in test cleanup
@@ -606,10 +612,16 @@ namespace WiniumTests {
             Print(method, "DRIVER CLOSED");
         }
         public void CloseWindow() {
+            //foreach (string handle in windowsOpen) {
+            //    if (!handle.Equals(intactMainHandle)) {
+            //        Print(method, handle);
+            //        driver.SwitchTo().Window(handle);
+            //        m.Click(By.Id("Close"));
+            //    }
+            //}
             if (m.IsElementPresent(By.Id("btnClose"))) {
                 m.Click(By.Id("btnClose"));
-            }
-            else if (m.IsElementPresent(By.Id("Close"))) {
+            } else if (m.IsElementPresent(By.Id("Close"))) {
                 m.Click(By.Id("Close"));
             } else {
                 action.KeyDown(OpenQA.Selenium.Keys.Alt).SendKeys(OpenQA.Selenium.Keys.F4).KeyUp(OpenQA.Selenium.Keys.Alt).Build().Perform();
