@@ -74,13 +74,11 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST4_DEFINITIONS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
             user.CreateNewDefinition();
         }
         [TestMethod]
         public void TEST5_TYPES() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
             user.CreateNewType();
         }
         [TestMethod]
@@ -101,7 +99,6 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST9_UTIL() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
             user.OpenUtil();
         }
         [TestMethod]

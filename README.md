@@ -23,10 +23,13 @@
 
 -Figure out what else I need to add
 
--Might have to close out of the thing each time to get solid tests in reality, will be slower, but probably more accurate
+-Might have to close out of the thing each time to get solid tests in reality, will be slower, and kill more intacts but probably more accurate
 
 -Search and stuff like that don't make sense really, why do they fail?
 
+-WinApp driver, winium isn't great, but WinApp driver can't hang when you try to change windows/with splash screens
+
+-----
 # Features Added 
 
 -Creation of Types and definitions and documents

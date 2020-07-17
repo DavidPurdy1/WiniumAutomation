@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Winium;
 using System;
 using System.Collections.Generic;
@@ -519,8 +518,7 @@ namespace WiniumTests {
         }
 
         public void AddToIPack() {
-            window = m.Locate(By.Id("pageIntact"), m.Locate(By.Name("radPanelBar1")));
-            window = m.Locate(By.Id("lstIntact"), window);
+            window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1")));
             m.Click(By.Name("iPack"), window);
             m.Click(By.Id("rbnBatch"));
             Thread.Sleep(1000);
@@ -528,12 +526,14 @@ namespace WiniumTests {
                 m.Click(By.Name("OK"));
             }
             Thread.Sleep(1000);
-
             m.Click(By.Id("radButton1")); 
-            Thread.Sleep(5000);
-            
+            Thread.Sleep(5000); 
         }
-        
+        public void AuditTrail() {
+            window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1")));
+            m.Click(By.Name("Audit Trail"), window);
+            m.Click(By.Name("Close"));
+        }
         #region 
         /** 
          * Found in test cleanup
