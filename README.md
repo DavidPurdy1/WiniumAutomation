@@ -11,7 +11,7 @@
 
 -On each screen go through and add interaction with each button and blank to see if it throws an error or messes something up
 
--Fix onFail so it will actually close out of the top layer window and if there is a save screen hit save and exit. verify that test resets are working on all screens!! <-- Hard
+-Fix onFail so it will actually close out of the top layer window and if there is a save screen hit save and exit. verify that test resets are working on all screens!! Foring through the window handles<-- Hard
 
 -Add annotations (Unimplemented Exeception) <-- Hard
 
@@ -22,6 +22,10 @@
 -In final console app implement something to be able to clear out the specified folders/archive it.
 
 -Figure out what else I need to add
+
+-Might have to close out of the thing each time to get solid tests in reality, will be slower, but probably more accurate
+
+-Search and stuff like that don't make sense really, why do they fail?
 
 # Features Added 
 
