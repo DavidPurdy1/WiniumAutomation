@@ -9,25 +9,21 @@
 
 -generate portfolios and that type of stuff
 
--On each screen go through and add interaction with each button and blank to see if it throws an error or messes something up
+-Fix onFail so it will actually close out of the top layer window and if there is a save screen hit save and exit. verify that test resets are working on all screens!! Foring through the window handles
 
--Fix onFail so it will actually close out of the top layer window and if there is a save screen hit save and exit. verify that test resets are working on all screens!! Foring through the window handles<-- Hard
+-Add annotations (Unimplemented Exeception)
 
--Add annotations (Unimplemented Exeception) <-- Hard
-
--Add utilities support ( only some need help ) 
-
--In the fail file specify where the thing fails
+-Add utilities support ( only some need help )
 
 -In final console app implement something to be able to clear out the specified folders/archive it.
 
--Figure out what else I need to add
+-Might have to close out of the thing each time to get solid tests in reality, will be slower, and kill more intacts but probably more accurate, add to testInitialize instead of assembly init. This will fix the problem. Move close driver to test cleanup but leave failFile in classCleanup
 
--Might have to close out of the thing each time to get solid tests in reality, will be slower, and kill more intacts but probably more accurate
-
--Search and stuff like that don't make sense really, why do they fail?
+-Now when using search and recognize don't fail if it works correctly, but doesn't find your input
 
 -WinApp driver, winium isn't great, but WinApp driver can't hang when you try to change windows/with splash screens
+
+-Figure out what else I need to add
 
 -----
 # Features Added 

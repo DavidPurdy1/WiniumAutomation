@@ -57,58 +57,66 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST1_LOGIN() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.LoginToIntact();
+            user.Login();
         }
         [TestMethod]
-        public void TEST2_INZONE() { //change it so that it throws error in usermethod
+        public void TEST2_INZONE() {
             method = MethodBase.GetCurrentMethod().Name;
-            if (!user.GetDocumentsFromInZone()) {
-                throw new AssertFailedException(method + " InZone did not recognize the definition correctly");
-            }
+            user.Login();
+            user.InZone();
         }
         [TestMethod]
         public void TEST3_BATCHREVIEW() { //Batch review runs slow      
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.BatchReview();
         }
         [TestMethod]
         public void TEST4_DEFINITIONS() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.CreateNewDefinition();
         }
         [TestMethod]
         public void TEST5_TYPES() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.CreateNewType();
         }
         [TestMethod]
         public void TEST6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.CreateDocument(1, true);
         }
         [TestMethod]
         public void TEST7_SEARCH() { //fix printings
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.Search("water");
         }
         [TestMethod]
         public void TEST8_RECOGNITION() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.TestRecognition("DEFAULT DOCUMENT OPTIONS", "DEFAULT DOCUMENT", "lorem");
         }
         [TestMethod]
         public void TEST9_UTIL() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.OpenUtil();
         }
         [TestMethod]
         public void TEST10_IPACK() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.AddToIPack();
         }
         [TestMethod]
         public void TEST11_LOGOUT() {
             method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
             user.Logout();
         }
         #endregion
