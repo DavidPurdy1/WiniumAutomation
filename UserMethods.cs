@@ -17,7 +17,7 @@ namespace WiniumTests {
         #region 
         IWebElement window;
         string method;
-        string intactMainHandle; 
+        string intactMainHandle;
         readonly DesktopOptions options = new DesktopOptions();
         readonly WiniumDriver driver;
         readonly WiniumMethods m;
@@ -62,15 +62,12 @@ namespace WiniumTests {
             Thread.Sleep(10000);
             m.SendKeys(By.Name(""), "admin");
             if (!needToSetDB) {
-                m.Click(By.Name("&Logon"));
+                m.Click(By.Name("&Logn"));
             } else {
                 setDatabaseInformation();
                 m.Click(By.Name("&Logon"));
             }
             Thread.Sleep(2000);
-            
-            intactMainHandle = driver.CurrentWindowHandle;
-            windowsOpen.Add(intactMainHandle);
             Print(method, " Finished");
         }
         public void Logout() {
@@ -100,12 +97,12 @@ namespace WiniumTests {
             Print(method, "Started");
 
             window = m.Locate(By.Id("frmIntactMain"));
-            window = m.Locate(By.Name("radMenu1"),window);
+            window = m.Locate(By.Name("radMenu1"), window);
             m.Click(By.Name("&Administration"), window);
-            window = m.Locate(By.Name("&Administration"),window);
+            window = m.Locate(By.Name("&Administration"), window);
             m.Click(By.Name("Definitions"), window);
 
-            if(definitionName.Length < 2) {
+            if (definitionName.Length < 2) {
                 definitionName = "Test";
             }
 
@@ -117,7 +114,7 @@ namespace WiniumTests {
                 Print(method, "Definition name is " + definitionName + num);
                 foreach (IWebElement element in window.FindElements(By.Name(""))) {
                     if (element.Enabled == true) {
-                        try { element.SendKeys(definitionName+ " " + num); } catch (Exception) { }
+                        try { element.SendKeys(definitionName + " " + num); } catch (Exception) { }
                     }
                 }
                 m.Click(By.Name("&Save"), window);
@@ -139,7 +136,7 @@ namespace WiniumTests {
 
             m.Click(By.Name("Types"), m.Locate(By.Name("&Administration")));
 
-            if(typeName.Length < 2) {
+            if (typeName.Length < 2) {
                 typeName = "Test";
             }
             for (int i = 0; i < numberOfTypes; i++) {
@@ -263,7 +260,7 @@ namespace WiniumTests {
          *  searchInput: string put in searchBar
          */
         #endregion
-        
+
         public void Search(string searchInput) {
             method = MethodBase.GetCurrentMethod().Name;
             window = m.Locate(By.Id("frmIntactMain"));
@@ -272,7 +269,7 @@ namespace WiniumTests {
             m.Click(By.Name("Search"), window);
 
             Thread.Sleep(1000);
-            if(m.IsElementPresent(By.Name("Quick Search"))) {
+            if (m.IsElementPresent(By.Name("Quick Search"))) {
                 Print(method, "Result not found");
                 //throw new AssertFailedException(method + ": Result Not Found");
             } else {
@@ -389,7 +386,7 @@ namespace WiniumTests {
             window = m.Locate(By.Id("frmInZoneMain"));
             m.Click(By.Id("btnCollectScan"), window);
             Thread.Sleep(10000);
-            
+
             bool hasPassed = false;
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
             foreach (string s in Directory.GetFiles(startPath)) {
@@ -458,7 +455,7 @@ namespace WiniumTests {
             m.SendKeys(By.Name(""), input, m.Locate(By.Id("txtFind"), window));
             m.Click(By.Id("btnFind"));
 
-            if(m.IsElementPresent(By.Name("Search Text Not Found"), window)) {
+            if (m.IsElementPresent(By.Name("Search Text Not Found"), window)) {
                 Print(method, "Search Text not found for Recognize");
                 //throw new AssertFailedException("Search Text not found for Recognize");
             }
@@ -545,8 +542,8 @@ namespace WiniumTests {
                 m.Click(By.Name("OK"));
             }
             Thread.Sleep(1000);
-            m.Click(By.Id("radButton1")); 
-            Thread.Sleep(5000); 
+            m.Click(By.Id("radButton1"));
+            Thread.Sleep(5000);
         }
         public void AuditTrail() {
             window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1")));
@@ -569,7 +566,7 @@ namespace WiniumTests {
             action.MoveByOffset(35, 0).Click().SendKeys("Portfolio" + new Random().Next().ToString()).Build().Perform();
 
             //definitions to add and adds them
-            if(definitionNames != null) {
+            if (definitionNames != null) {
                 foreach (string defName in definitionNames) {
                     m.Click(By.Name(defName));
                     m.Click(By.Id("btnAdd"));
@@ -577,7 +574,7 @@ namespace WiniumTests {
             } else {
                 m.Click(By.Id("btnAdd"));
             }
-            m.Click(By.Id("btnSave"),window);
+            m.Click(By.Id("btnSave"), window);
             m.Click(By.Id("btnClose"), window);
 
         }
@@ -590,10 +587,17 @@ namespace WiniumTests {
             if (folderPath.Length < 2) {
                 folderPath = ConfigurationManager.AppSettings.Get("AutomationScreenshots");
             }
-            string path = Path.Combine(folderPath, testName + "_" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString() + "-" + DateTime.Now.Year.ToString() +
-                "_" + DateTime.Now.Hour.ToString() + "-" + DateTime.Now.Minute.ToString() + "-" + DateTime.Now.Second.ToString());
-            ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path, ImageFormat.Png);
+
+            //YYYY-MM-DD__HH-MM-SS
+            string dateAndTime = DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString() + "__"
+                + DateTime.Now.Hour.ToString() + "-" + DateTime.Now.Minute.ToString() + "-" + DateTime.Now.Second.ToString();
+
+            //creates file, stores screenshot in path
+            string path = Path.Combine(folderPath, testName + "_" + dateAndTime);
+            ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(path + ".PNG", ImageFormat.Png);
+
             CloseWindow();
+
             return path;
         }
         /** 
@@ -602,14 +606,25 @@ namespace WiniumTests {
         public void WriteFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
+
+            //YYYY-MM-DD__HH-MM-SS
+            string dateAndTime = DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString() + "__"
+                + DateTime.Now.Hour.ToString() + "-" + DateTime.Now.Minute.ToString() + "-" + DateTime.Now.Second.ToString();
+
+            //writes the result file information
             using (StreamWriter file =
-            new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile"), true)) {
-                file.WriteLine(DateTime.Now.ToString() + "| " + testsFailedNames.Count.ToString() + " Tests failed | " + testsPassedNames.Count.ToString() + " Tests passed |");
+            new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile") + dateAndTime + ".txt" , false)) {
+
+                file.WriteLine(DateTime.Now.ToString() + "| " + testsFailedNames.Count.ToString() + " Tests failed| "
+                    + testsPassedNames.Count.ToString() + " Tests passed|" +
+                    " Tester: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name + "|");
+
+                //tests failed and passed on New Line
                 foreach (string name in testsFailedNames) {
-                    file.WriteLine(name + " failed");
+                    file.WriteLine(name + " failed|");
                 }
                 foreach (string name in testsPassedNames) {
-                    file.WriteLine(name + " passed");
+                    file.WriteLine(name + " passed|");
                 }
                 file.WriteLine(" ");
             }

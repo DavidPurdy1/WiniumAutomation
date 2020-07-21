@@ -20,12 +20,7 @@ namespace WiniumTests {
 
         #region
         [AssemblyInitialize]
-        public static void TestingInit(TestContext testContext) {
-            foreach (Process app in Process.GetProcesses()) {
-                if (app.ProcessName.Equals("Intact")) {
-                    app.Kill();
-                }
-            }
+        public static void AssemblyInit(TestContext testContext) {
             user = new UserMethods(debugLog);
             XmlConfigurator.Configure();
             Application.EnableVisualStyles();
@@ -33,6 +28,14 @@ namespace WiniumTests {
         }
         [TestInitialize]
         public void TestInit() {
+            method = MethodBase.GetCurrentMethod().Name;
+            foreach (Process app in Process.GetProcesses()) {
+                if (app.ProcessName.Equals("Intact")) {
+                    app.Kill();
+                    Print(method, "Previous Intact Killed");
+                }
+            }
+            user = new UserMethods(debugLog);
             Print(TestContext.TestName, "STARTED *********************************************");
         }
         [TestCleanup]
@@ -45,11 +48,11 @@ namespace WiniumTests {
                 testsFailedNames.Add(TestContext.TestName + " " + imagePath + " | ");
                 Print(method, "FAILED *****************************************");
             }
+            user.CloseDriver();
         }
         [ClassCleanup]
         public static void Cleanup() {
             user.WriteFailFile(testsFailedNames, testsPassedNames);
-            user.CloseDriver();
         }
         #endregion 
 
@@ -135,10 +138,11 @@ namespace WiniumTests {
         #region RUN ALL TESTS HERE *******
         /**
          * This test is going to go straight through all testing without closing Intact. 
-         * Inaccurate compared to testing each one in a playlist. 
+         * Inaccurate compared to testing each one in a playlist, but faster. 
+         * Needs to be updated each time a new test is created.
          */
         [TestMethod]
-        public void TEST9_9_ALL() { 
+        public void TEST9_9_ALL() {  //do something with a global boolean to decide whether or not you have to login. Then you can call the tests inside of another test.
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.CreateNewType();
