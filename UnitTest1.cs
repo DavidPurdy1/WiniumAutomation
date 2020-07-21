@@ -55,70 +55,107 @@ namespace WiniumTests {
 
         #region
         [TestMethod]
-        public void TEST1_LOGIN() {
+        public void TEST1_1_LOGIN() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
         }
         [TestMethod]
-        public void TEST2_INZONE() {
+        public void TEST1_2_INZONE() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.InZone();
         }
         [TestMethod]
-        public void TEST3_BATCHREVIEW() { //Batch review runs slow      
+        public void TEST1_3_BATCHREVIEW() { //Batch review runs slow      
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.BatchReview();
         }
         [TestMethod]
-        public void TEST4_DEFINITIONS() {
+        public void TEST1_4_DEFINITIONS() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.CreateNewDefinition();
         }
         [TestMethod]
-        public void TEST5_TYPES() {
+        public void TEST1_5_TYPES() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.CreateNewType();
         }
         [TestMethod]
-        public void TEST6_DOCUMENTS() {
+        public void TEST1_6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.CreateDocument(1, true);
         }
         [TestMethod]
-        public void TEST7_SEARCH() { //fix printings
+        public void TEST1_7_SEARCH() { 
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.Search("water");
         }
         [TestMethod]
-        public void TEST8_RECOGNITION() {
+        public void TEST1_8_RECOGNITION() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.TestRecognition("DEFAULT DOCUMENT OPTIONS", "DEFAULT DOCUMENT", "lorem");
         }
         [TestMethod]
-        public void TEST9_UTIL() {
+        public void TEST1_9_UTIL() { //unfinished 
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.OpenUtil();
         }
         [TestMethod]
-        public void TEST10_IPACK() {
+        public void TEST2_1_IPACK() { //unfinished
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.AddToIPack();
         }
         [TestMethod]
-        public void TEST11_LOGOUT() {
+        public void TEST2_2_LOGOUT() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.Logout();
         }
+        [TestMethod]
+        public void TEST2_3_AUDITTRAIL() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
+            user.AuditTrail();
+        }
+        [TestMethod]
+        public void TEST2_4_PORTFOLIO() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
+            user.Portfolio(new string[] {"time", "is", "10:48" });
+        }
+
+        #region RUN ALL TESTS HERE *******
+        /**
+         * This test is going to go straight through all testing without closing Intact. 
+         * Inaccurate compared to testing each one in a playlist. 
+         */
+        [TestMethod]
+        public void TEST9_9_ALL() { 
+            method = MethodBase.GetCurrentMethod().Name;
+            user.Login();
+            user.CreateNewType();
+            user.CreateNewDefinition();
+            user.CreateDocument();
+            user.InZone();
+            user.BatchReview();
+            user.Search("test");
+            user.TestRecognition("DEFAULT DEF", "DEFAULT DEFINITION TEST", "test");
+            user.Portfolio();
+            user.AuditTrail();
+            user.AddToIPack();
+            user.OpenUtil();
+            user.Logout();
+        }
+        #endregion
+
         #endregion
 
         private void Print(string method, string toPrint) {

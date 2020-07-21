@@ -412,7 +412,7 @@ namespace WiniumTests {
          * Method copies over files from one directory to another: Each time before InZone collects this is going to put files in the collector folder
          * Verify that the startPath always has files in it and those files shouldn't be removed from this folder when collected.
          */
-        private void AddDocsToCollector() {
+        public void AddDocsToCollector() {
             method = MethodBase.GetCurrentMethod().Name;
             string startPath = ConfigurationManager.AppSettings.Get("InZoneStartPath");
             string endPath = ConfigurationManager.AppSettings.Get("InZoneCollectorPath");
@@ -524,11 +524,24 @@ namespace WiniumTests {
             m.Click(By.Id("Close"));
         }
         public void AddToIPack() {
+            OpenOrganizer();
+            window = m.Locate(By.Name("DEFAULT DEF"));
+            action.MoveToElement(window).ContextClick().Build().Perform();
+            window = m.Locate(By.Name("DropDown"));
+            m.Click(By.Name("Add to iPack..."));
+            m.Click(By.Name("Yes"));
+            m.Click(By.Id("btnNewIpack"));
+            Thread.Sleep(1000);
+            window = m.Locate(By.Id("frmNewiPack"));
+            m.SendKeys(By.Name(""), "test" + new Random().Next().ToString(), window);
+            m.Click(By.Id("rbnOK"));
+            m.Click(By.Id("btnOK"));
             window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1")));
             m.Click(By.Name("iPack"), window);
-            m.Click(By.Id("rbnBatch"));
+            //m.Click(By.Id("rbnBatch"));
             Thread.Sleep(1000);
-            if(m.IsElementPresent(By.Name("No documents were selected"))) {
+            window = m.Locate(By.Id("frmIntactMain"));
+            if (m.IsElementPresent(By.Name("No documents were selected"), window)) {
                 m.Click(By.Name("OK"));
             }
             Thread.Sleep(1000);
@@ -538,10 +551,35 @@ namespace WiniumTests {
         public void AuditTrail() {
             window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1")));
             m.Click(By.Name("Audit Trail"), window);
+            window = m.Locate(By.Id("frmAuditTrail"));
 
-            //....
+            m.Click(By.Id("rcbDate"), window);
+            m.Click(By.Id("rbnFind"), window);
 
-            m.Click(By.Name("Close"));
+            m.Click(By.Id("rbnClose"), window);
+        }
+        public void Portfolio(string[] definitionNames = null) {
+            //open and name portfolio
+            window = m.Locate(By.Name("&Administration"), m.Locate(By.Name("radMenu1")));
+            m.Click(By.Name("Portfolios"), window);
+            Thread.Sleep(1000);
+            m.Click(By.Id("btnAdd"));
+            window = m.Locate(By.Id("frmPortfolioEdit"));
+            m.Click(By.Id("label1"), window);
+            action.MoveByOffset(35, 0).Click().SendKeys("Portfolio" + new Random().Next().ToString()).Build().Perform();
+
+            //definitions to add and adds them
+            if(definitionNames != null) {
+                foreach (string defName in definitionNames) {
+                    m.Click(By.Name(defName));
+                    m.Click(By.Id("btnAdd"));
+                }
+            } else {
+                m.Click(By.Id("btnAdd"));
+            }
+            m.Click(By.Id("btnSave"),window);
+            m.Click(By.Id("btnClose"), window);
+
         }
         #region 
         /** 
