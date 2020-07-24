@@ -2,10 +2,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Winium;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
@@ -62,7 +64,7 @@ namespace WiniumTests {
             Thread.Sleep(10000);
             m.SendKeys(By.Name(""), "admin");
             if (!needToSetDB) {
-                m.Click(By.Name("&Logn"));
+                m.Click(By.Name("&Logon"));
             } else {
                 setDatabaseInformation();
                 m.Click(By.Name("&Logon"));
@@ -603,7 +605,7 @@ namespace WiniumTests {
         /** 
          * Writes tests passed and failed in a file that can be set in config, appends to file and give the path to the screenshot
          */
-        public void WriteFailFile(List<string> testsFailedNames, List<string> testsPassedNames) {
+        public void WriteFailFile(List<string> testsFailedNames, List<string> testsPassedNames, List<string> imagePaths) {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
 
@@ -615,18 +617,31 @@ namespace WiniumTests {
             using (StreamWriter file =
             new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile") + dateAndTime + ".txt" , false)) {
 
-                file.WriteLine(DateTime.Now.ToString() + "| " + testsFailedNames.Count.ToString() + " Tests failed| "
-                    + testsPassedNames.Count.ToString() + " Tests passed|" +
-                    " Tester: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name + "|");
+                //file.WriteLine(DateTime.Now.ToString() + "| " + testsFailedNames.Count.ToString() + " Tests failed| "
+                //    + testsPassedNames.Count.ToString() + " Tests passed|" +
+                //    " Tester: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name + "|");
+
+                var versionInfo = FileVersionInfo.GetVersionInfo(ConfigurationManager.AppSettings.Get("IntactPath"));
+                string version = versionInfo.FileVersion; // Will typically return "1.0.0.0" in your case
+                file.WriteLine("");
+                file.WriteLine(DateTime.Now.ToString());
+                file.WriteLine("Tests failed| " + testsFailedNames.Count.ToString());
+                file.WriteLine("Tests passed| " + testsPassedNames.Count.ToString());
+                file.WriteLine("Tester: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name);
+                file.WriteLine("App Version: " + version);
+                file.WriteLine("App Name: " + ConfigurationManager.AppSettings.Get("IntactPath"));
 
                 //tests failed and passed on New Line
+                int i = 0; 
                 foreach (string name in testsFailedNames) {
-                    file.WriteLine(name + " failed|");
+                    file.WriteLine("failed| " + name);
+                    file.WriteLine(imagePaths[i]);
+                    i++; 
                 }
                 foreach (string name in testsPassedNames) {
-                    file.WriteLine(name + " passed|");
+                    file.WriteLine("passed| " + name);
                 }
-                file.WriteLine(" ");
+                //file.WriteLine(" ");
             }
         }
         /**Take images from folder and put them on a word doc
@@ -665,6 +680,14 @@ namespace WiniumTests {
             //}
             //wordDoc.SaveAs2(ConfigurationManager.AppSettings.Get("TestFailedDocs"));
             //word.Quit();
+        }
+
+        public void SendToDB() {
+            Process parser = new Process();
+            parser.StartInfo.UseShellExecute = false;
+            parser.StartInfo.FileName = @"C:\Automation\Parser\FileParser.exe";
+            parser.StartInfo.CreateNoWindow = true;
+            parser.Start(); 
         }
         #endregion
 

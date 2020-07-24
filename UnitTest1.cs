@@ -15,6 +15,7 @@ namespace WiniumTests {
         public static UserMethods user;
         static List<string> testsFailedNames = new List<string>();
         static List<string> testsPassedNames = new List<string>();
+        static List<string> imagePaths = new List<string>();
         public TestContext TestContext { get; set; }
         #endregion
 
@@ -44,15 +45,16 @@ namespace WiniumTests {
                 testsPassedNames.Add(TestContext.TestName);
                 Print(method, "PASSED *****************************************");
             } else {
-                string imagePath = user.OnFail(TestContext.TestName);
-                testsFailedNames.Add(TestContext.TestName + " " + imagePath + " | ");
+                imagePaths.Add(user.OnFail(TestContext.TestName) + ".PNG");
+                testsFailedNames.Add(TestContext.TestName);
                 Print(method, "FAILED *****************************************");
             }
             user.CloseDriver();
         }
         [ClassCleanup]
         public static void Cleanup() {
-            user.WriteFailFile(testsFailedNames, testsPassedNames);
+            user.WriteFailFile(testsFailedNames, testsPassedNames, imagePaths);
+            user.SendToDB(); 
         }
         #endregion 
 
