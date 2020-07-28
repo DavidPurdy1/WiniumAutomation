@@ -28,7 +28,7 @@ namespace WiniumTests {
         List<string> windowsOpen = new List<string>();
         #endregion
 
-        #region
+        #region Setup
         public UserMethods(ILog log) {
             debugLog = log;
             options.ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath");
@@ -89,7 +89,7 @@ namespace WiniumTests {
         }
         #endregion
 
-        #region
+        #region Create
         //TO TEST THIS MAKE SURE THAT INTACT IS IN FULL SCREEN, FIX
 
         /**This is going to a specified amount of definitions with random name for each blank.
@@ -97,8 +97,11 @@ namespace WiniumTests {
         public void CreateNewDefinition(int? numberOfDefinitions = 1, string definitionName = "") {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
-
+            //check if maximized
             window = m.Locate(By.Id("frmIntactMain"));
+            if (m.IsElementPresent(By.Name("Maximize"), window)) {
+                m.Click(By.Name("Maximize"), window);
+            }
             window = m.Locate(By.Name("radMenu1"), window);
             m.Click(By.Name("&Administration"), window);
             window = m.Locate(By.Name("&Administration"), window);
@@ -132,8 +135,12 @@ namespace WiniumTests {
         public void CreateNewType(int? numberOfTypes = 1, string typeName = "") {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
-
-            window = m.Locate(By.Name("radMenu1"), m.Locate(By.Id("frmIntactMain")));
+            //check if maximized
+            window = m.Locate(By.Id("frmIntactMain"));
+            if (m.IsElementPresent(By.Name("Maximize"), window)) {
+                m.Click(By.Name("Maximize"), window);
+            }
+            window = m.Locate(By.Name("radMenu1"), window);
             m.Click(By.Name("&Administration"), window);
 
             m.Click(By.Name("Types"), m.Locate(By.Name("&Administration")));
@@ -169,6 +176,11 @@ namespace WiniumTests {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
             Thread.Sleep(2000);
+            //check if maximized
+            window = m.Locate(By.Id("frmIntactMain"));
+            if (m.IsElementPresent(By.Name("Maximize"), window)) {
+                m.Click(By.Name("Maximize"), window);
+            }
 
             for (int i = 0; i < numOfDocs; i++) {
                 m.Click(By.Name("Add Document"));
@@ -258,11 +270,11 @@ namespace WiniumTests {
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             action.ClickAndHold().MoveByOffset(0, 50).Build().Perform();
         }
-        /** Searches intact for a keyword, if not found fails the test
-         *  searchInput: string put in searchBar
-         */
         #endregion
 
+        /** Searches intact for a keyword, if not found fails the test
+        *  searchInput: string put in searchBar
+        */
         public void Search(string searchInput) {
             method = MethodBase.GetCurrentMethod().Name;
             window = m.Locate(By.Id("frmIntactMain"));
@@ -580,7 +592,8 @@ namespace WiniumTests {
             m.Click(By.Id("btnClose"), window);
 
         }
-        #region 
+
+        #region Cleanup 
         /** 
          * Found in test cleanup
          * saves screenshot in the directory specified, closes top window, returns path for the fail file
@@ -616,13 +629,8 @@ namespace WiniumTests {
             //writes the result file information
             using (StreamWriter file =
             new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile") + dateAndTime + ".txt" , false)) {
-
-                //file.WriteLine(DateTime.Now.ToString() + "| " + testsFailedNames.Count.ToString() + " Tests failed| "
-                //    + testsPassedNames.Count.ToString() + " Tests passed|" +
-                //    " Tester: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name + "|");
-
                 var versionInfo = FileVersionInfo.GetVersionInfo(ConfigurationManager.AppSettings.Get("IntactPath"));
-                string version = versionInfo.FileVersion; // Will typically return "1.0.0.0" in your case
+                string version = versionInfo.FileVersion;
                 file.WriteLine("");
                 file.WriteLine(DateTime.Now.ToString());
                 file.WriteLine("Tests failed| " + testsFailedNames.Count.ToString());
@@ -641,13 +649,12 @@ namespace WiniumTests {
                 foreach (string name in testsPassedNames) {
                     file.WriteLine("passed| " + name);
                 }
-                //file.WriteLine(" ");
             }
         }
         /**Take images from folder and put them on a word doc
          * Put at the end of tests.
          */
-        public void WriteFailToWord() { //have to figure out how to delete things afterwards
+        public void WriteFailToWord() { 
             //method = MethodBase.GetCurrentMethod().Name;
             //Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
             //Document wordDoc = word.Documents.Add();
@@ -685,25 +692,18 @@ namespace WiniumTests {
         public void SendToDB() {
             Process parser = new Process();
             parser.StartInfo.UseShellExecute = false;
-            parser.StartInfo.FileName = @"C:\Automation\Parser\FileParser.exe";
+            parser.StartInfo.FileName = ConfigurationManager.AppSettings.Get("FileParser");
             parser.StartInfo.CreateNoWindow = true;
             parser.Start(); 
         }
         #endregion
 
-        #region
+        #region Close
         public void CloseDriver() {
             driver.Quit();
             Print(method, "DRIVER CLOSED");
         }
         public void CloseWindow() {
-            //foreach (string handle in windowsOpen) {
-            //    if (!handle.Equals(intactMainHandle)) {
-            //        Print(method, handle);
-            //        driver.SwitchTo().Window(handle);
-            //        m.Click(By.Id("Close"));
-            //    }
-            //}
             if (m.IsElementPresent(By.Id("btnClose"))) {
                 m.Click(By.Id("btnClose"));
             } else if (m.IsElementPresent(By.Id("Close"))) {

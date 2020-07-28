@@ -107,12 +107,6 @@ namespace WiniumTests {
             user.TestRecognition("DEFAULT DOCUMENT OPTIONS", "DEFAULT DOCUMENT", "lorem");
         }
         [TestMethod]
-        public void TEST1_9_UTIL() { //unfinished 
-            method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.OpenUtil();
-        }
-        [TestMethod]
         public void TEST2_1_IPACK() { //unfinished
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
@@ -130,12 +124,18 @@ namespace WiniumTests {
             user.Login();
             user.AuditTrail();
         }
-        [TestMethod]
-        public void TEST2_4_PORTFOLIO() {
-            method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.Portfolio(new string[] {"time", "is", "10:48" });
-        }
+        //[TestMethod]
+        //public void TEST1_9_UTIL() { //unfinished 
+        //    method = MethodBase.GetCurrentMethod().Name;
+        //    user.Login();
+        //    user.OpenUtil();
+        //}
+        //[TestMethod]
+        //public void TEST2_4_PORTFOLIO() {
+        //    method = MethodBase.GetCurrentMethod().Name;
+        //    user.Login();
+        //    user.Portfolio(new string[] {"time", "is", "10:48" });
+        //}
 
         #region RUN ALL TESTS HERE *******
         /**
@@ -146,19 +146,19 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST9_9_ALL() {  //do something with a global boolean to decide whether or not you have to login. Then you can call the tests inside of another test.
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.CreateNewType();
-            user.CreateNewDefinition();
-            user.CreateDocument();
-            user.InZone();
-            user.BatchReview();
-            user.Search("test");
-            user.TestRecognition("DEFAULT DEF", "DEFAULT DEFINITION TEST", "test");
-            user.Portfolio();
-            user.AuditTrail();
-            user.AddToIPack();
-            user.OpenUtil();
-            user.Logout();
+            //user.Login();
+            //user.CreateNewType();
+            //user.CreateNewDefinition();
+            //user.CreateDocument();
+            //user.InZone();
+            //user.BatchReview();
+            //user.Search("test");
+            //user.TestRecognition("DEFAULT DEF", "DEFAULT DEFINITION TEST", "test");
+            //user.Portfolio();
+            //user.AuditTrail();
+            //user.AddToIPack();
+            //user.OpenUtil();
+            //user.Logout();
         }
         #endregion
 
