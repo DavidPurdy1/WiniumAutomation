@@ -694,7 +694,8 @@ namespace WiniumTests {
             parser.StartInfo.UseShellExecute = false;
             parser.StartInfo.FileName = ConfigurationManager.AppSettings.Get("FileParser");
             parser.StartInfo.CreateNoWindow = true;
-            parser.Start(); 
+            parser.Start();
+            Print(method, "Parser Started");
         }
         #endregion
 

@@ -20,8 +20,8 @@ namespace WiniumTests {
         #endregion
 
         #region
-        [AssemblyInitialize]
-        public static void AssemblyInit(TestContext testContext) {
+        [ClassInitialize]
+        public static void ClassInit(TestContext testContext) {
             user = new UserMethods(debugLog);
             XmlConfigurator.Configure();
             Application.EnableVisualStyles();
