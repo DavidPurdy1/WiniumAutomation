@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace WiniumTests {
     [TestClass]
-    public class IntactTest {
+    public class WiniumTest {
         #region
         static readonly ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
         public string method;

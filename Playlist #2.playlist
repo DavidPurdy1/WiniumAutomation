@@ -1,6 +1,0 @@
-<Playlist Version="1.0">
-  <Add Test="WiniumTests.IntactTest.TEST1_LOGIN" />
-  <Add Test="WiniumTests.IntactTest.TEST5_TYPES" />
-  <Add Test="WiniumTests.IntactTest.TEST4_DEFINITIONS" />
-  <Add Test="WiniumTests.IntactTest.TEST6_DOCUMENTS" />
-</Playlist>

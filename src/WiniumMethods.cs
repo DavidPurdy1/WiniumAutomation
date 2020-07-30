@@ -6,7 +6,7 @@ using System;
 using System.Reflection;
 
 
-namespace WiniumTests {
+namespace WiniumTests.src {
     public class WiniumMethods {
         string method;
         readonly WiniumDriver driver;

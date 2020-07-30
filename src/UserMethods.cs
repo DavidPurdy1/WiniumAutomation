@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Winium;
 using System;
 using System.Collections.Generic;
@@ -14,18 +13,16 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace WiniumTests {
+namespace WiniumTests.src {
     public class UserMethods {
         #region 
         IWebElement window;
         string method;
-        string intactMainHandle;
         readonly DesktopOptions options = new DesktopOptions();
         readonly WiniumDriver driver;
         readonly WiniumMethods m;
         readonly ILog debugLog;
         readonly Actions action;
-        List<string> windowsOpen = new List<string>();
         #endregion
 
         #region Setup
@@ -690,12 +687,9 @@ namespace WiniumTests {
         }
 
         public void SendToDB() {
-            Process parser = new Process();
-            parser.StartInfo.UseShellExecute = false;
-            parser.StartInfo.FileName = ConfigurationManager.AppSettings.Get("FileParser");
-            parser.StartInfo.CreateNoWindow = true;
-            parser.Start();
-            Print(method, "Parser Started");
+            string connectionString = ConfigurationManager.AppSettings.Get("DBConnection");
+            DataExporter exporter = new DataExporter(connectionString);
+            exporter.ParseFile(new TestData()); 
         }
         #endregion
 
@@ -716,7 +710,7 @@ namespace WiniumTests {
         }
         #endregion
 
-        private void Print(string method, string toPrint) {
+        public void Print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }
     }
