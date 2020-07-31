@@ -69,6 +69,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Cleanup.cs" />
+    <Compile Include="src\Create.cs" />
+    <Compile Include="src\IntactSetup.cs" />
     <Compile Include="Unit Tests\BasicTest.cs" />
     <Compile Include="src\DataExporter.cs" />
     <Compile Include="src\TestData.cs" />

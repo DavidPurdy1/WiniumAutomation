@@ -1,12 +1,13 @@
-﻿using System.IO; 
-using System;
+﻿using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 
 namespace WiniumTests.src {
-     /*Exports Data parsed at the end of the run from a .txt file and adds it to the test run and test case table in sql
-     */ 
+    /// <summary>
+    /// Exports Parsed Data from the .txt file the tests output on cleanup and sends that to sql
+    /// </summary>
     class DataExporter {
         private readonly SqlConnection connection;
         public DataExporter(string connectionString) {

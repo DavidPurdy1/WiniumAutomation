@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
+using WiniumTests.src;
 
 namespace WiniumTests {
     [TestClass]
@@ -54,7 +55,7 @@ namespace WiniumTests {
         [ClassCleanup]
         public static void Cleanup() {
             user.WriteFailFile(testsFailedNames, testsPassedNames, imagePaths);
-            user.SendToDB(); 
+            user.SendToDB();
         }
         #endregion 
 
@@ -95,7 +96,7 @@ namespace WiniumTests {
             user.CreateDocument(1, true);
         }
         [TestMethod]
-        public void TEST1_7_SEARCH() { 
+        public void TEST1_7_SEARCH() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Login();
             user.Search("water");

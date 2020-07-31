@@ -5,20 +5,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
+using WiniumTests.src;
 
 namespace WiniumTests {
     /// <summary>
     /// Login to Intact and Create a Document
     /// </summary>
     [TestClass]
-    public class BasicTest{
+    public class BasicTest {
         #region Test Fields
         static readonly ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
         public string method;
         public static UserMethods user;
-        static List<string> testsFailedNames = new List<string>();
-        static List<string> testsPassedNames = new List<string>();
-        static List<string> imagePaths = new List<string>();
+        static readonly List<string> testsFailedNames = new List<string>();
+        static readonly List<string> testsPassedNames = new List<string>();
+        static readonly List<string> imagePaths = new List<string>();
         public TestContext TestContext { get; set; }
         #endregion
 
@@ -52,12 +53,12 @@ namespace WiniumTests {
                 testsFailedNames.Add(TestContext.TestName);
                 Print(method, "FAILED *****************************************");
             }
-            user.CloseDriver();
+            user.Cleanup().CloseDriver();
         }
         [ClassCleanup]
         public static void Cleanup() {
-            user.WriteFailFile(testsFailedNames, testsPassedNames, imagePaths);
-            user.SendToDB();
+            user.Cleanup().WriteFailFile(testsFailedNames, testsPassedNames, imagePaths);
+            user.Cleanup().SendToDB();
         }
         #endregion
 
@@ -70,13 +71,13 @@ namespace WiniumTests {
         [TestMethod]
         public void TEST1_1_LOGIN() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
+            user.Setup().Login(); 
         }
         [TestMethod]
         public void TEST1_6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.CreateDocument(1, true);
+            user.Setup().Login(); 
+            user.Create().SimpleCreateDocument(); 
         }
     }
 }

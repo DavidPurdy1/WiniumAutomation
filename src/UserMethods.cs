@@ -590,6 +590,19 @@ namespace WiniumTests.src {
 
         }
 
+        public IntactSetup Setup() {
+            return new IntactSetup(m); 
+        }
+        public Create Create() {
+            return new Create(m, action, debugLog); 
+        }
+        public Cleanup Cleanup() {
+            return new Cleanup(m, debugLog); 
+        }
+        public DocumentCollect DocumentCollect() {
+            return new DocumentCollect(m, action, debugLog); 
+        }
+
         #region Cleanup 
         /** 
          * Found in test cleanup
@@ -625,7 +638,7 @@ namespace WiniumTests.src {
 
             //writes the result file information
             using (StreamWriter file =
-            new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile") + dateAndTime + ".txt" , false)) {
+            new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile") + dateAndTime + ".txt", false)) {
                 var versionInfo = FileVersionInfo.GetVersionInfo(ConfigurationManager.AppSettings.Get("IntactPath"));
                 string version = versionInfo.FileVersion;
                 file.WriteLine("");
@@ -637,11 +650,11 @@ namespace WiniumTests.src {
                 file.WriteLine("App Name: " + ConfigurationManager.AppSettings.Get("IntactPath"));
 
                 //tests failed and passed on New Line
-                int i = 0; 
+                int i = 0;
                 foreach (string name in testsFailedNames) {
                     file.WriteLine("failed| " + name);
                     file.WriteLine(imagePaths[i]);
-                    i++; 
+                    i++;
                 }
                 foreach (string name in testsPassedNames) {
                     file.WriteLine("passed| " + name);
@@ -651,7 +664,7 @@ namespace WiniumTests.src {
         /**Take images from folder and put them on a word doc
          * Put at the end of tests.
          */
-        public void WriteFailToWord() { 
+        public void WriteFailToWord() {
             //method = MethodBase.GetCurrentMethod().Name;
             //Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
             //Document wordDoc = word.Documents.Add();
@@ -689,7 +702,7 @@ namespace WiniumTests.src {
         public void SendToDB() {
             string connectionString = ConfigurationManager.AppSettings.Get("DBConnection");
             DataExporter exporter = new DataExporter(connectionString);
-            exporter.ParseFile(new TestData()); 
+            exporter.ParseFile(new TestData());
         }
         #endregion
 

@@ -47,7 +47,7 @@ namespace WiniumTests.src {
                     element.Click();
                     Print(method, by.ToString() + " Clicked");
                 }
-            } catch (StaleElementReferenceException e ) {
+            } catch (StaleElementReferenceException e) {
                 Print(method, "Could not click element " + by.ToString() + e.StackTrace);
                 throw new AssertFailedException(method + "Could not click element " + by.ToString());
             } catch (ElementNotVisibleException e) {
@@ -79,10 +79,10 @@ namespace WiniumTests.src {
                     element.SendKeys(input);
                     Print(method, by.ToString() + " sent " + input);
                 }
-            } catch (StaleElementReferenceException e ) {
+            } catch (StaleElementReferenceException e) {
                 Print(method, "Could not send to element " + by.ToString() + e.StackTrace);
                 throw new AssertFailedException(method + "Could not send to element " + by.ToString());
-            } catch (InvalidElementStateException e ) {
+            } catch (InvalidElementStateException e) {
                 Print(method, " element is not able to recieve keys" + by.ToString() + e.StackTrace);
                 throw new AssertFailedException(method + " element is not able to recieve keys" + by.ToString());
             } catch (ElementNotVisibleException e) {
@@ -114,6 +114,13 @@ namespace WiniumTests.src {
         }
         public bool IsElementPresent(By by, IWebElement parent) {
             return parent.FindElements(by).Count > 0;
+        }
+        public Screenshot GetScreenshot() {
+            return ((ITakesScreenshot)driver).GetScreenshot();
+        }
+        public void CloseDriver() {
+            driver.Quit();
+            Print(method, "DRIVER CLOSED");
         }
         private void Print(string method, string toPrint = "", Exception e = null) {
             debugLog.Info(method + " " + toPrint + " " + e);
