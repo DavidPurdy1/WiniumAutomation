@@ -9,11 +9,11 @@ using WiniumTests.src;
 
 namespace WiniumTests {
     /// <summary>
-    /// Login to Intact and Create a Document
-    /// Time: About 2 mins
+    /// Login to Intact, More InDepth Create a Document, Test InZone, Batch Review
+    /// Time: 
     /// </summary>
     [TestClass]
-    public class BasicTest {
+    public class AdvancedTest {
         #region Test Fields
         static readonly ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
         public string method;
@@ -70,15 +70,22 @@ namespace WiniumTests {
         #endregion
 
         [TestMethod]
-        public void TEST1_1_LOGIN() {
-            method = MethodBase.GetCurrentMethod().Name;
-            user.Setup().Login(); 
-        }
-        [TestMethod]
         public void TEST1_6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Setup().Login(); 
-            user.Create().SimpleCreateDocument(); 
+            user.Setup().Login();
+            user.Create().CreateDocument();
+        }
+        [TestMethod]
+        public void TEST1_2_INZONE() {
+            method = MethodBase.GetCurrentMethod().Name;
+            user.Setup().Login();
+            user.DocumentCollect().InZone();
+        }
+        [TestMethod]
+        public void TEST1_3_BATCHREVIEW() { //Batch review runs slow      
+            method = MethodBase.GetCurrentMethod().Name;
+            user.Setup().Login();
+            user.DocumentCollect().BatchReview();
         }
     }
 }

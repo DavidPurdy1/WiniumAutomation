@@ -9,12 +9,18 @@ using System.Threading;
 using System.Windows.Forms;
 
 namespace WiniumTests.src {
+    /// <summary>
+    /// Class contains methods to create new document, definition, or type
+    /// </summary>
     public class Create {
+
+        #region fields
         IWebElement window;
         readonly WiniumMethods m;
-        Actions action;
+        readonly Actions action;
         string method = "";
-        ILog debugLog;
+        readonly ILog debugLog;
+        #endregion
 
         public Create(WiniumMethods m, Actions action, ILog debugLog) {
             this.m = m;
@@ -26,6 +32,7 @@ namespace WiniumTests.src {
                 m.Click(By.Name("Maximize"), window);
             }
         }
+
         /**This is going to a specified amount of definitions with random name for each blank.
        */
         public void CreateNewDefinition(int? numberOfDefinitions = 1, string definitionName = "") {
@@ -219,8 +226,6 @@ namespace WiniumTests.src {
                 Print(method, "Finished");
             }
         }
-        /**Used to add annotations on frmDocument window
-         */
         private void AddAnnotations() {
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             m.Click(By.Id("lblType"));
@@ -231,7 +236,7 @@ namespace WiniumTests.src {
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             action.ClickAndHold().MoveByOffset(0, 50).Build().Perform();
         }
-        public void Print(string method, string toPrint) {
+        private void Print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);
         }
     }

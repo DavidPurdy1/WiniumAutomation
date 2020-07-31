@@ -1,5 +1,4 @@
 ﻿using log4net;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -55,7 +54,7 @@ namespace WiniumTests.src {
 
             //writes the result file information
             using (StreamWriter file =
-            new StreamWriter(ConfigurationManager.AppSettings.Get("TestFailedFile") + dateAndTime + ".txt", false)) {
+            new StreamWriter(ConfigurationManager.AppSettings.Get("TestResultFiles") + dateAndTime + ".txt", false)) {
                 var versionInfo = FileVersionInfo.GetVersionInfo(ConfigurationManager.AppSettings.Get("IntactPath"));
                 string version = versionInfo.FileVersion;
                 file.WriteLine("");
@@ -120,12 +119,9 @@ namespace WiniumTests.src {
             DataExporter exporter = new DataExporter(connectionString);
             exporter.ParseFile(new TestData());
         }
-
-        #region Close
         public void CloseDriver() {
             m.CloseDriver();
         }
-        #endregion
 
         public void Print(string method, string toPrint) {
             debugLog.Info(method + " " + toPrint);

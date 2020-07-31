@@ -69,16 +69,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Cleanup.cs" />
-    <Compile Include="src\Create.cs" />
-    <Compile Include="src\IntactSetup.cs" />
+    <Compile Include="src\UserMethod\Cleanup.cs" />
+    <Compile Include="src\UserMethod\Create.cs" />
+    <Compile Include="src\UserMethod\DocumentCollect.cs" />
+    <Compile Include="src\UserMethod\IntactSetup.cs" />
+    <Compile Include="src\UserMethod\Misc.cs" />
+    <Compile Include="src\UserMethod\SearchRecognize.cs" />
     <Compile Include="Unit Tests\BasicTest.cs" />
-    <Compile Include="src\DataExporter.cs" />
-    <Compile Include="src\TestData.cs" />
-    <Compile Include="Unit Tests\UnitTest1.cs" />
+    <Compile Include="src\UserMethod\DataExporter.cs" />
+    <Compile Include="Unit Tests\RegressionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\UserMethods.cs" />
     <Compile Include="src\WiniumMethods.cs" />
+    <Compile Include="Unit Tests\AdvancedTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

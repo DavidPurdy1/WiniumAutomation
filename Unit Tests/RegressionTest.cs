@@ -1,26 +1,30 @@
-﻿using log4net;
-using log4net.Config;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Diagnostics;
+using log4net;
 using System.Reflection;
-using System.Windows.Forms;
 using WiniumTests.src;
+using System.Diagnostics;
+using log4net.Config;
+using System.Windows.Forms;
 
-namespace WiniumTests {
+namespace WiniumTests.Unit_Tests {
+    /// <summary>
+    /// All Intact Tests with all elements tested
+    /// Time: 
+    /// </summary>
     [TestClass]
-    public class WiniumTest {
-        #region
+    public class RegressionTest {
+        #region Test Fields
         static readonly ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
         public string method;
         public static UserMethods user;
-        static List<string> testsFailedNames = new List<string>();
-        static List<string> testsPassedNames = new List<string>();
-        static List<string> imagePaths = new List<string>();
+        static readonly List<string> testsFailedNames = new List<string>();
+        static readonly List<string> testsPassedNames = new List<string>();
+        static readonly List<string> imagePaths = new List<string>();
         public TestContext TestContext { get; set; }
         #endregion
 
-        #region
+        #region Test Attributes
         [ClassInitialize]
         public static void ClassInit(TestContext testContext) {
             user = new UserMethods(debugLog);
@@ -46,127 +50,91 @@ namespace WiniumTests {
                 testsPassedNames.Add(TestContext.TestName);
                 Print(method, "PASSED *****************************************");
             } else {
-                imagePaths.Add(user.OnFail(TestContext.TestName) + ".PNG");
+                imagePaths.Add(user.Cleanup().OnFail(TestContext.TestName) + ".PNG");
                 testsFailedNames.Add(TestContext.TestName);
                 Print(method, "FAILED *****************************************");
             }
-            user.CloseDriver();
+            user.Cleanup().CloseDriver();
         }
         [ClassCleanup]
         public static void Cleanup() {
-            user.WriteFailFile(testsFailedNames, testsPassedNames, imagePaths);
-            user.SendToDB();
+            user.Cleanup().WriteFailFile(testsFailedNames, testsPassedNames, imagePaths);
+            user.Cleanup().SendToDB();
         }
-        #endregion 
+        #endregion
+
+        #region Print
+        private void Print(string method, string toPrint) {
+            debugLog.Info(method + " " + toPrint);
+        }
+        #endregion
 
         #region
         [TestMethod]
         public void TEST1_1_LOGIN() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
+            user.Setup().Login(); 
         }
         [TestMethod]
         public void TEST1_2_INZONE() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.InZone();
+            user.Setup().Login();
+            user.DocumentCollect().InZone();
         }
         [TestMethod]
         public void TEST1_3_BATCHREVIEW() { //Batch review runs slow      
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.BatchReview();
+            user.Setup().Login();
+            user.DocumentCollect().BatchReview();
         }
         [TestMethod]
         public void TEST1_4_DEFINITIONS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.CreateNewDefinition();
+            user.Setup().Login();
+            user.Create().CreateNewDefinition();
         }
         [TestMethod]
         public void TEST1_5_TYPES() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.CreateNewType();
+            user.Setup().Login();
+            user.Create().CreateNewType();
         }
         [TestMethod]
         public void TEST1_6_DOCUMENTS() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.CreateDocument(1, true);
+            user.Setup().Login();
+            user.Create().CreateDocument(1, true);
         }
         [TestMethod]
         public void TEST1_7_SEARCH() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.Search("water");
+            user.Setup().Login();
+            user.SearchRecognize().Search("water");
         }
         [TestMethod]
         public void TEST1_8_RECOGNITION() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.TestRecognition("DEFAULT DOCUMENT OPTIONS", "DEFAULT DOCUMENT", "lorem");
+            user.Setup().Login();
+            user.SearchRecognize().Recognition("DEFAULT DOCUMENT OPTIONS", "DEFAULT DOCUMENT", "lorem");
         }
         [TestMethod]
         public void TEST2_1_IPACK() { //unfinished
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.AddToIPack();
+            user.Setup().Login();
+            user.Misc().AddToIPack();
         }
         [TestMethod]
         public void TEST2_2_LOGOUT() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.Logout();
+            user.Setup().Login();
+            user.Setup().Logout();
         }
         [TestMethod]
         public void TEST2_3_AUDITTRAIL() {
             method = MethodBase.GetCurrentMethod().Name;
-            user.Login();
-            user.AuditTrail();
-        }
-        //[TestMethod]
-        //public void TEST1_9_UTIL() { //unfinished 
-        //    method = MethodBase.GetCurrentMethod().Name;
-        //    user.Login();
-        //    user.OpenUtil();
-        //}
-        //[TestMethod]
-        //public void TEST2_4_PORTFOLIO() {
-        //    method = MethodBase.GetCurrentMethod().Name;
-        //    user.Login();
-        //    user.Portfolio(new string[] {"time", "is", "10:48" });
-        //}
-
-        #region RUN ALL TESTS HERE *******
-        /**
-         * This test is going to go straight through all testing without closing Intact. 
-         * Inaccurate compared to testing each one in a playlist, but faster. 
-         * Needs to be updated each time a new test is created.
-         */
-        [TestMethod]
-        public void TEST9_9_ALL() {  //do something with a global boolean to decide whether or not you have to login. Then you can call the tests inside of another test.
-            method = MethodBase.GetCurrentMethod().Name;
-            //user.Login();
-            //user.CreateNewType();
-            //user.CreateNewDefinition();
-            //user.CreateDocument();
-            //user.InZone();
-            //user.BatchReview();
-            //user.Search("test");
-            //user.TestRecognition("DEFAULT DEF", "DEFAULT DEFINITION TEST", "test");
-            //user.Portfolio();
-            //user.AuditTrail();
-            //user.AddToIPack();
-            //user.OpenUtil();
-            //user.Logout();
+            user.Setup().Login();
+            user.Misc().AuditTrail();
         }
         #endregion
-
-        #endregion
-
-        private void Print(string method, string toPrint) {
-            debugLog.Info(method + " " + toPrint);
-        }
     }
 }

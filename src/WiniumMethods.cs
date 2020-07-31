@@ -7,6 +7,9 @@ using System.Reflection;
 
 
 namespace WiniumTests.src {
+    /// <summary>
+    /// Class containing methods used to locate elements, interact with the form, and driver actions
+    /// </summary>
     public class WiniumMethods {
         string method;
         readonly WiniumDriver driver;

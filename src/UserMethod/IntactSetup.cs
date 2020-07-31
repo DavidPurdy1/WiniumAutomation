@@ -1,9 +1,13 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Winium;
 using System.Configuration;
 using System.Reflection;
 using System.Threading;
 
 namespace WiniumTests.src {
+    /// <summary>
+    /// Methods that happen at the beginning of a test
+    /// </summary>
     public class IntactSetup {
 
         IWebElement window;
@@ -17,12 +21,12 @@ namespace WiniumTests.src {
          * This is going to connect to a remote server with the name brought in by serverName, when used
          * Doesn't work with the changes that have been made, lots of these are readonly
          */
-        public void ConnectToRemoteDesktop(string serverName) {
+        private void ConnectToRemoteDesktop(DesktopOptions options,string serverName) {
 
             //method = MethodBase.GetCurrentMethod().Name;
-            //print(method, "Started");
+            //Print(method, "Started");
 
-            //options.ApplicationPath = ConfigurationManager.AppSettings.Get("RemoteDesktop"); 
+            //options.ApplicationPath = ConfigurationManager.AppSettings.Get("RemoteDesktop");
             //driver = new WiniumDriver(driverPath, options);
             //m.sendKeysByName("Remote Desktop Connection", serverName);
             //m.clickByName("Connect");
@@ -42,7 +46,7 @@ namespace WiniumTests.src {
             if (!needToSetDB) {
                 m.Click(By.Name("&Logon"));
             } else {
-                setDatabaseInformation();
+                SetDatabaseInformation();
                 m.Click(By.Name("&Logon"));
             }
             Thread.Sleep(2000);
@@ -51,7 +55,7 @@ namespace WiniumTests.src {
             window = m.Locate(By.Name("&Intact"), m.Locate(By.Name("radMenu1")));
             m.Click(By.Name("Log Out"), window);
         }
-        private void setDatabaseInformation() {
+        private void SetDatabaseInformation() {
             m.Click(By.Name("&Settings.."));
             m.SendKeys(By.Name(""), @"(local)\INTACT");
             m.SendKeys(By.Name(""), "{TAB}");
