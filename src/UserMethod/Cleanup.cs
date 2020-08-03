@@ -35,7 +35,7 @@ namespace WiniumTests.src {
 
             //creates file, stores screenshot in path
             string path = Path.Combine(folderPath, testName + "_" + dateAndTime);
-            m.GetScreenshot().SaveAsFile(path + ".PNG", ImageFormat.Png);
+            m.GetScreenshot().SaveAsFile(path + ".PNG");
 
             //CloseWindow();
 

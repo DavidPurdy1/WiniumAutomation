@@ -37,8 +37,6 @@ C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.T
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\WebDriver.dll
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\WebDriver.Support.dll
-C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Winium.Elements.Desktop.dll
-C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Winium.WebDriver.dll
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
 C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\WebDriver.xml
@@ -46,3 +44,10 @@ C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\WebDriver.Support.xml
 C:\Users\i00018\source\repos\WiniumAutomation\obj\Debug\WiniumTests.csproj.CopyComplete
 C:\Users\i00018\source\repos\WiniumAutomation\obj\Debug\WiniumTests.dll
 C:\Users\i00018\source\repos\WiniumAutomation\obj\Debug\WiniumTests.pdb
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Appium.Net.dll
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Castle.Core.dll
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Newtonsoft.Json.dll
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\SeleniumExtras.PageObjects.dll
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Castle.Core.xml
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\i00018\source\repos\WiniumAutomation\bin\Debug\Newtonsoft.Json.xml

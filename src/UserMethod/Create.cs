@@ -116,30 +116,38 @@ namespace WiniumTests.src {
         public void SimpleCreateDocument(bool isPDF = true, string docPath = "", int? fileNumber = 0) {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
-
             m.Click(By.Name("Add Document"));
+            Thread.Sleep(2000);
+            m.NextHandle();
+            
 
             //add document button (+ icon)
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             m.Click(By.Id("lblType"));
+
+            m.handleList.Add(m.GetCurrentHandle());
+
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
             action.MoveByOffset(20, -40).Click().MoveByOffset(20, 60).Click().Build().Perform();
             Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-
             //find the document to add in file explorer
             //configure docpath in app.config, takes arg of pdf or tif 
             if (docPath.Length < 1) {
                 docPath = ConfigurationManager.AppSettings.Get("AddDocumentStorage");
             }
-            m.SendKeys(By.Id("1001"), docPath);
+            Thread.Sleep(3000);
+            m.NextHandle();
+            m.SendKeys(By.Id("14704"), docPath);
             Print(method, "Go to \"" + docPath + "\"");
             m.Click(By.Name("Go to \"" + docPath + "\""));
 
             var rand = new Random();
             if (isPDF) {
-                Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(m.Locate(By.Name("Files of type:")));
-                filesOfType.SendKeys("p");
-                filesOfType.SendKeys(OpenQA.Selenium.Keys.Enter);
+                window = m.Locate(By.Name("Files of type:"));
+                window.Click();
+                window.SendKeys("p");
+                window.SendKeys(OpenQA.Selenium.Keys.Enter);
+
                 Thread.Sleep(500);
                 if (fileNumber == 0) {
                     action.MoveToElement(m.Locate(By.Id(rand.Next(Directory.GetFiles(docPath, "*.pdf").Length).ToString()))).DoubleClick().Build().Perform();
@@ -192,9 +200,9 @@ namespace WiniumTests.src {
 
                 var rand = new Random();
                 if (isPDF) {
-                    Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(m.Locate(By.Name("Files of type:")));
-                    filesOfType.SendKeys("p");
-                    filesOfType.SendKeys(OpenQA.Selenium.Keys.Enter);
+                    //Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(m.Locate(By.Name("Files of type:")));
+                    //filesOfType.SendKeys("p");
+                    //filesOfType.SendKeys(OpenQA.Selenium.Keys.Enter);
                     Thread.Sleep(500);
                     if (fileNumber == 0) {
                         action.MoveToElement(m.Locate(By.Id(rand.Next(Directory.GetFiles(docPath, "*.pdf").Length).ToString()))).DoubleClick().Build().Perform();

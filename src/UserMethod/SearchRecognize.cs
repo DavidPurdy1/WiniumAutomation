@@ -117,9 +117,9 @@ namespace WiniumTests.src {
 
             var rand = new Random();
             if (isPDF) {
-                Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(m.Locate(By.Name("Files of type:")));
-                filesOfType.SendKeys("p");
-                filesOfType.SendKeys(OpenQA.Selenium.Keys.Enter);
+                //Winium.Elements.Desktop.ComboBox filesOfType = new Winium.Elements.Desktop.ComboBox(m.Locate(By.Name("Files of type:")));
+                //filesOfType.SendKeys("p");
+                //filesOfType.SendKeys(OpenQA.Selenium.Keys.Enter);
                 Thread.Sleep(500);
                 if (fileNumber == 0) {
                     action.MoveToElement(m.Locate(By.Id(rand.Next(Directory.GetFiles(docPath, "*.pdf").Length).ToString()))).DoubleClick().Build().Perform();

@@ -1,6 +1,8 @@
 ﻿using log4net;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Winium;
+using OpenQA.Selenium.Appium;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Windows;
 using System;
 using System.Configuration;
 
@@ -10,19 +12,22 @@ namespace WiniumTests.src {
     /// </summary>
     public class UserMethods {
         #region fields
-        readonly DesktopOptions options = new DesktopOptions();
-        readonly WiniumDriver driver;
+        readonly AppiumOptions options;
+        readonly WindowsDriver<WindowsElement> driver;
         readonly WiniumMethods m;
         readonly ILog debugLog;
         readonly Actions action;
+        protected const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723/";
         #endregion
 
         #region Setup
         public UserMethods(ILog log) {
+
             debugLog = log;
-            options.ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath");
-            driver = new WiniumDriver(ConfigurationManager.AppSettings.Get("DriverPath"), options);
-            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
+            options = new AppiumOptions();
+            options.AddAdditionalCapability("app", ConfigurationManager.AppSettings.Get("IntactPath"));
+            driver = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), options);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);
             action = new Actions(driver);
             m = new WiniumMethods(driver, debugLog);
         }
