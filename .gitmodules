@@ -1,0 +1,3 @@
+[submodule "Automated-Testing"]
+	path = Automated-Testing
+	url = https://github.com/DavidPurdy1/Automated-Testing.git

@@ -22,7 +22,7 @@ namespace WiniumTests.src {
             debugLog = log;
             options.ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath");
             driver = new WiniumDriver(ConfigurationManager.AppSettings.Get("DriverPath"), options);
-            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
+            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(double.Parse(ConfigurationManager.AppSettings.Get("DriverPath"))));
             action = new Actions(driver);
             m = new WiniumMethods(driver, debugLog);
         }
