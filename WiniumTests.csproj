@@ -82,6 +82,8 @@
     <Compile Include="src\UserMethods.cs" />
     <Compile Include="src\WiniumMethods.cs" />
     <Compile Include="Unit Tests\AdvancedTest.cs" />
+    <Compile Include="Unit Tests\FullTest.cs" />
+    <Compile Include="Unit Tests\FourPartTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

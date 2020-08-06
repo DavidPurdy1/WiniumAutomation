@@ -1,0 +1,8 @@
+
+8/4/2020 9:36:26 AM
+Tests failed| 0
+Tests passed| 1
+Tester: INFODYNAMICS\i00018
+App Version: 4.0.62.10
+App Name: C:\Program Files (x86)\InfoDynamics, Inc\Intact 4\Intact.exe
+passed| TEST2_1_IPACK

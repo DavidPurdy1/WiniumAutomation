@@ -109,7 +109,7 @@ namespace WiniumTests.Unit_Tests {
         public void TEST1_7_SEARCH() {
             method = MethodBase.GetCurrentMethod().Name;
             user.Setup().Login();
-            user.SearchRecognize().Search("water");
+            user.SearchRecognize().Search("Default");
         }
         [TestMethod]
         public void TEST1_8_RECOGNITION() {

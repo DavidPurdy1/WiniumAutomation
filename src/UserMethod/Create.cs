@@ -91,10 +91,12 @@ namespace WiniumTests.src {
             }
             for (int i = 0; i < numberOfTypes; i++) {
                 var temp = new Random().Next().ToString();
-
-                window = m.Locate(By.Id("frmAdminTypes"), m.Locate(By.Id("frmIntactMain")));
-
+                window = m.Locate(By.Id("frmIntactMain"));
+                Thread.Sleep(500);
+                window = m.Locate(By.Id("frmAdminTypes"), window);
+                Thread.Sleep(500);
                 m.Click(By.Id("rbtnAdd"), window);
+                Thread.Sleep(500);
                 window = m.Locate(By.Id("frmAdminTypesInfo"));
 
                 foreach (IWebElement element in window.FindElements(By.Name(""))) {

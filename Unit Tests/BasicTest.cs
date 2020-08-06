@@ -68,7 +68,7 @@ namespace WiniumTests {
             debugLog.Info(method + " " + toPrint);
         }
         #endregion
-
+        
         [TestMethod]
         public void TEST1_1_LOGIN() {
             method = MethodBase.GetCurrentMethod().Name;

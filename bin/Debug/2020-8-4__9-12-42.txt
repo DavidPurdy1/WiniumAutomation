@@ -1,0 +1,9 @@
+
+8/4/2020 9:12:42 AM
+Tests failed| 1
+Tests passed| 0
+Tester: INFODYNAMICS\i00018
+App Version: 4.0.62.10
+App Name: C:\Program Files (x86)\InfoDynamics, Inc\Intact 4\Intact.exe
+failed| TEST1_5_TYPES
+\\infod-filesvr\collaboration\QA Documents\Testing Automation\automationScreenshots\TEST1_5_TYPES_2020-8-4__9-12-26.PNG

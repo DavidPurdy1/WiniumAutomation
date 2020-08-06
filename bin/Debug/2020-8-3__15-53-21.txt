@@ -1,0 +1,7 @@
+
+8/3/2020 3:53:21 PM
+Tests failed| 0
+Tests passed| 0
+Tester: INFODYNAMICS\i00018
+App Version: 4.0.62.10
+App Name: C:\Program Files (x86)\InfoDynamics, Inc\Intact 4\Intact.exe
