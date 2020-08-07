@@ -1,43 +1,32 @@
-﻿using log4net;
-using log4net.Config;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using log4net;
 using System.Reflection;
-using System.Windows.Forms;
-using WiniumTests.src;
 
-namespace WiniumTests
+
+namespace WiniumTests.src
 {
-    /// <summary>
-    /// Login to Intact, More InDepth Create a Document, Test InZone, Batch Review
-    /// Time: 
-    /// </summary>
-    [TestClass]
-    public class AdvancedTest
+
+    public class TestTemplate
     {
-        #region Test Fields
-        static readonly ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
-        public string method;
+        public TestContext TestContext { get; set; }
         public static UserMethods user;
+        string method = string.Empty;
+        static readonly ILog debugLog = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType.FullName);
         static readonly List<string> testsFailedNames = new List<string>();
         static readonly List<string> testsPassedNames = new List<string>();
         static readonly List<string> testsInconclusiveNames = new List<string>();
         static readonly List<string> imagePaths = new List<string>();
-        public TestContext TestContext { get; set; }
-        #endregion
 
-        #region Test Attributes
         [ClassInitialize]
-        public static void ClassInit(TestContext testContext)
+        public void ClassInitialize()
         {
-            user = new UserMethods(debugLog);
-            XmlConfigurator.Configure();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            method = MethodBase.GetCurrentMethod().Name;
+            throw new NotImplementedException();
         }
-        [TestInitialize]
-        public void TestInit()
+        public void TestInitialize()
         {
             method = MethodBase.GetCurrentMethod().Name;
             foreach (Process app in Process.GetProcesses())
@@ -51,9 +40,10 @@ namespace WiniumTests
             user = new UserMethods(debugLog);
             Print(TestContext.TestName, "STARTED *********************************************");
         }
-        [TestCleanup]
+
         public void TestCleanup()
         {
+            method = MethodBase.GetCurrentMethod().Name;
             if (TestContext.CurrentTestOutcome == UnitTestOutcome.Inconclusive)
             {
                 testsInconclusiveNames.Add(TestContext.TestName);
@@ -72,41 +62,15 @@ namespace WiniumTests
             }
             user.Cleanup().CloseDriver();
         }
-        [ClassCleanup]
-        public static void Cleanup()
+        public void ClassCleanup()
         {
             user.Cleanup().WriteFailFile(testsFailedNames, testsPassedNames, testsInconclusiveNames, imagePaths);
             user.Cleanup().SendToDB();
         }
-        #endregion
-
-        #region Print
         private void Print(string method, string toPrint)
         {
             debugLog.Info(method + " " + toPrint);
         }
-        #endregion
-
-        [TestMethod]
-        public void TEST1_6_DOCUMENTS()
-        {
-            method = MethodBase.GetCurrentMethod().Name;
-            user.Setup().Login();
-            user.Create().CreateDocument();
-        }
-        [TestMethod]
-        public void TEST1_2_INZONE()
-        {
-            method = MethodBase.GetCurrentMethod().Name;
-            user.Setup().Login();
-            user.DocumentCollect().InZone();
-        }
-        [TestMethod]
-        public void TEST1_3_BATCHREVIEW()
-        { //Batch review runs slow      
-            method = MethodBase.GetCurrentMethod().Name;
-            user.Setup().Login();
-            user.DocumentCollect().BatchReview();
-        }
     }
+
 }

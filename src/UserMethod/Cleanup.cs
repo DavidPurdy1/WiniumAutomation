@@ -7,16 +7,19 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 
-namespace WiniumTests.src {
+namespace WiniumTests.src
+{
     /// <summary>
     /// Class containing methods used at the end of a test case or test run.
     /// </summary>
-    public class Cleanup {
+    public class Cleanup
+    {
         readonly WiniumMethods m;
         string method = "";
         readonly ILog debugLog;
 
-        public Cleanup(WiniumMethods m, ILog debugLog) {
+        public Cleanup(WiniumMethods m, ILog debugLog)
+        {
             this.m = m;
             this.debugLog = debugLog;
         }
@@ -24,8 +27,10 @@ namespace WiniumTests.src {
          * Found in test cleanup
          * saves screenshot in the directory specified, closes top window, returns path for the fail file
          */
-        public string OnFail(string testName, string folderPath = "") {
-            if (folderPath.Length < 2) {
+        public string OnFail(string testName, string folderPath = "")
+        {
+            if (folderPath.Length < 2)
+            {
                 folderPath = ConfigurationManager.AppSettings.Get("AutomationScreenshots");
             }
 
@@ -44,7 +49,8 @@ namespace WiniumTests.src {
         /** 
          * Writes tests passed and failed in a file that can be set in config, appends to file and give the path to the screenshot
          */
-        public void WriteFailFile(List<string> testsFailedNames, List<string> testsPassedNames, List<string> imagePaths) {
+        public void WriteFailFile(List<string> testsFailedNames, List<string> testsPassedNames, List<string> testInconclusiveNames, List<string> imagePaths)
+        {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
 
@@ -54,7 +60,8 @@ namespace WiniumTests.src {
 
             //writes the result file information
             using (StreamWriter file =
-            new StreamWriter(ConfigurationManager.AppSettings.Get("TestResultFiles") + dateAndTime + ".txt", false)) {
+            new StreamWriter(ConfigurationManager.AppSettings.Get("TestResultFiles") + dateAndTime + ".txt", false))
+            {
                 var versionInfo = FileVersionInfo.GetVersionInfo(ConfigurationManager.AppSettings.Get("IntactPath"));
                 string version = versionInfo.FileVersion;
                 file.WriteLine("");
@@ -67,20 +74,20 @@ namespace WiniumTests.src {
 
                 //tests failed and passed on New Line
                 int i = 0;
-                foreach (string name in testsFailedNames) {
+                foreach (string name in testsFailedNames)
+                {
                     file.WriteLine("failed| " + name);
                     file.WriteLine(imagePaths[i]);
                     i++;
                 }
-                foreach (string name in testsPassedNames) {
+                foreach (string name in testsPassedNames)
+                {
                     file.WriteLine("passed| " + name);
                 }
             }
         }
-        /**Take images from folder and put them on a word doc
-         * Put at the end of tests.
-         */
-        public void WriteFailToWord() {
+        public void WriteFailToWord()
+        {
             //method = MethodBase.GetCurrentMethod().Name;
             //Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
             //Document wordDoc = word.Documents.Add();
@@ -114,16 +121,32 @@ namespace WiniumTests.src {
             //wordDoc.SaveAs2(ConfigurationManager.AppSettings.Get("TestFailedDocs"));
             //word.Quit();
         }
-        public void SendToDB() {
+
+
+        // These are both going to be checks at the end of a test to see whether the test was interrupted or if there was an error message. 
+        public void CheckForInterruptions()
+        { //Throw a test interrupted error
+            System.Runtime.InteropServices.WindowData lastWindow = new System.Runtime.InteropServices.WindowData();
+            lastWindow.GetActiveWindow();
+            Console.WriteLine(lastWindow.WindowTitle);
+            Console.WriteLine(lastWindow.WindowProcess);
+        }
+        public void CheckForIntactErrorMessage()
+        { //throw a Assert.Fail
+            throw new NotImplementedException();
+        }
+        public void SendToDB()
+        {
             string connectionString = ConfigurationManager.AppSettings.Get("DBConnection");
             DataExporter exporter = new DataExporter(connectionString);
             exporter.ParseFile(new TestData());
         }
-        public void CloseDriver() {
+        public void CloseDriver()
+        {
             m.CloseDriver();
         }
-
-        public void Print(string method, string toPrint) {
+        public void Print(string method, string toPrint)
+        {
             debugLog.Info(method + " " + toPrint);
         }
     }
